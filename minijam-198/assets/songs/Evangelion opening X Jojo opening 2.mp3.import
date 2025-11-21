@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c6uvecfuyv2lx"
+path="res://.godot/imported/Evangelion opening X Jojo opening 2.mp3-3fc503b5dc655bff6df430db37b42ff3.mp3str"
+
+[deps]
+
+source_file="res://assets/songs/Evangelion opening X Jojo opening 2.mp3"
+dest_files=["res://.godot/imported/Evangelion opening X Jojo opening 2.mp3-3fc503b5dc655bff6df430db37b42ff3.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
