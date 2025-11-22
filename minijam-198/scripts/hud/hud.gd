@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var start_label = $StartLabel
 @onready var mana_bar = $ManaBar
 @onready var pv_label = $PVLabel  # Nouveau label pour les PV
+@onready var impactframe = $impactframe
 
 func _ready():
 	# Connecter le signal du joueur
@@ -40,3 +41,7 @@ func update_mana(current: float, max_value: float):
 
 func show_speed(speed):
 	$SpeedLabel.text = str(speed)
+
+func going_fast(is_it) -> void:
+	if is_it:$fastshader.visible = true
+	else:$fastshader.visible=false

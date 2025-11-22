@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0s7hhx13v7j1"]
+[gd_scene load_steps=4 format=3 uid="uid://d0s7hhx13v7j1"]
 
 [ext_resource type="Script" uid="uid://jpgpdr15v7ha" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="Texture2D" uid="uid://cco54q68qyf7u" path="res://assets/UI/fleche_lane.png" id="2_dovo2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
 size = Vector2(40, 40)
@@ -18,3 +19,9 @@ shape = SubResource("RectangleShape2D_dovo2")
 
 [node name="CooldownSpell" type="Timer" parent="."]
 wait_time = 0.5
+
+[node name="TargetingIndicator" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(80, 19)
+scale = Vector2(4, 4)
+texture = ExtResource("2_dovo2")

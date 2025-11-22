@@ -45,6 +45,7 @@ atlas = ExtResource("3_yak2t")
 region = Rect2(368, 64, 16, 16)
 
 [node name="QTE_UI" type="Control"]
+z_index = 1
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -63,11 +64,16 @@ texture_controller_Y = SubResource("AtlasTexture_edh1y")
 texture_controller_X = SubResource("AtlasTexture_f546g")
 texture_controller_LT = SubResource("AtlasTexture_c1e2c")
 texture_controller_RT = SubResource("AtlasTexture_o0mu5")
+texture_spell_1 = SubResource("AtlasTexture_gactx")
+texture_spell_2 = SubResource("AtlasTexture_f546g")
+texture_spell_3 = SubResource("AtlasTexture_q6lo0")
+texture_spell_4 = SubResource("AtlasTexture_edh1y")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 640.0
+offset_bottom = 360.0
+scale = Vector2(2, 2)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
 layout_mode = 2

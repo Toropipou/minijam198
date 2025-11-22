@@ -12,8 +12,6 @@ func _ready() -> void:
 	qte_manager.qte_scene = preload("res://scenes/game_scene/system/QTE_UI.tscn")
 	qte_manager.start_qte(["x","x"],2)
 
-
-
 func _on_interact_button_pressed() -> void:
 	# Démarre un QTE simple : X → A → B en 3 secondes
 	qte_manager.start_qte(["x", "a", "b"], 3.0)

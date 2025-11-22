@@ -5,6 +5,9 @@ extends CharacterBody2D
 @onready var game_manager = get_parent().get_parent().get_parent()
 @onready var spell_projectile_scene = preload("res://scenes/entity/spell_projectile.tscn")
 
+# Indicateur de visée
+@onready var targeting_indicator = $TargetingIndicator  # Nœud qui contiendra la flèche
+var arrow_size_base := Vector2(2,2)
 # Système de PV
 signal health_changed(current_health: int, max_health: int)
 
@@ -13,27 +16,60 @@ var current_health: int = 3
 
 # Mapping des touches aux sorts
 const SPELL_KEYS = {
-	"spell_1": "fire",    # Par exemple touche 1 ou Z
-	"spell_2": "water",   # Touche 2 ou X
-	"spell_3": "earth",   # Touche 3 ou C
-	"spell_4": "air"      # Touche 4 ou V
+	"spell_1": "fire",
+	"spell_2": "water",
+	"spell_3": "earth",
+	"spell_4": "air"
 }
 
 # Système de ciblage de couloir
 enum TargetLane { TOP, BOTTOM }
 var current_target_lane : TargetLane = TargetLane.BOTTOM
 
-# Positions des couloirs (doivent correspondre aux positions du spawner)
+# Positions des couloirs (pour les projectiles)
 const LANE_TOP_Y : float = 200.0
 const LANE_BOTTOM_Y : float = 547.0
+
+# Paramètres de l'indicateur rotatif
+const INDICATOR_DISTANCE : float = 20.0  # Distance de la flèche par rapport au centre du joueur
+const INDICATOR_ANGLE_TOP : float = -45.0  # Angle pour le couloir haut (en degrés)
+const INDICATOR_ANGLE_BOTTOM : float = 0.0  # Angle pour le couloir bas (horizontal)
 
 func _ready() -> void:
 	add_to_group("player")
 	current_health = max_health
 	health_changed.emit(current_health, max_health)
+	
+	# Créer l'indicateur si non présent
+	_setup_targeting_indicator()
+	
+	# Initialiser la rotation de l'indicateur
+	update_visual_indicator()
+	
+	# Animation idle subtile
+	_start_indicator_idle_animation()
+
+func _setup_targeting_indicator() -> void:
+	"""Crée l'indicateur de visée rotatif"""
+	targeting_indicator = $TargetingIndicator
+
+func _start_indicator_idle_animation():
+	"""Animation idle subtile de l'indicateur"""
+	if not targeting_indicator:
+		return
+	
+	var tween = create_tween()
+	tween.set_loops()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_SINE)
+	
+	# Pulsation d'échelle légère
+	var base_scale = arrow_size_base
+	tween.tween_property(targeting_indicator, "scale", base_scale * 1.1, 0.6)
+	tween.tween_property(targeting_indicator, "scale", base_scale, 0.6)
 
 func _process(_delta: float) -> void:
-	# Changement de couloir ciblé avec les flèches ou W/S
+	# Changement de couloir ciblé
 	if Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("lane_up"):
 		switch_to_top_lane()
 	elif Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("lane_down"):
@@ -44,17 +80,17 @@ func _process(_delta: float) -> void:
 		if Input.is_action_just_pressed(action):
 			var spell_type = SPELL_KEYS[action]
 			
-			# Tentative de lancer le sort avec le couloir ciblé
 			var success = game_manager.cast_spell(spell_type, current_target_lane)
 			
 			if success:
 				print("Sort lancé : ", spell_type, " vers couloir ", "HAUT" if current_target_lane == TargetLane.TOP else "BAS")
+				if game_manager.current_mana <= 0:
+					game_manager.qte_mandatory = true
 			else:
 				print("Impossible de lancer le sort (mana ou cooldown)")
 			
 			break
 
-# Méthode pour prendre des dégâts
 func take_damage(amount: int) -> void:
 	if amount <= 0:
 		return
@@ -64,11 +100,9 @@ func take_damage(amount: int) -> void:
 	
 	print("💔 Dégâts reçus : ", amount, " | PV restants : ", current_health, "/", max_health)
 	
-	# Vérifier si le joueur est mort
 	if current_health <= 0:
 		die()
 
-# Méthode pour se soigner
 func heal(amount: int) -> void:
 	if amount <= 0:
 		return
@@ -83,11 +117,12 @@ func heal(amount: int) -> void:
 	else:
 		print("⚕️ PV déjà au maximum")
 
-# Méthode appelée lors de la mort du joueur
 func die() -> void:
 	print("💀 Le joueur est mort !")
 	SceneLoader.load_scene(get_main_menu_scene_path())
+
 @export_file("*.tscn") var main_menu_scene_path : String
+
 func get_main_menu_scene_path() -> String:
 	if main_menu_scene_path.is_empty():
 		return AppConfig.main_menu_scene_path
@@ -104,28 +139,67 @@ func switch_to_bottom_lane():
 	print("🎯 Ciblage : COULOIR BAS")
 
 func update_visual_indicator():
-	# Déplacer légèrement le sprite pour indiquer le couloir ciblé
-	var target_y = LANE_BOTTOM_Y if current_target_lane == TargetLane.BOTTOM else LANE_TOP_Y
+	"""Fait tourner l'indicateur vers l'angle du couloir ciblé"""
+	if not targeting_indicator:
+		return
 	
-	# Animation douce vers la position du couloir
+	# Calculer l'angle cible en radians
+	var target_angle_deg = INDICATOR_ANGLE_BOTTOM if current_target_lane == TargetLane.BOTTOM else INDICATOR_ANGLE_TOP
+	var target_angle_rad = deg_to_rad(target_angle_deg)
+	
+	# Animation douce de rotation
 	var tween = create_tween()
-	tween.tween_property(self, "position:y", target_y, 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.tween_property(targeting_indicator, "rotation", target_angle_rad, 0.3)
+	
+	# Effet de pulsation pour feedback
+	_pulse_indicator()
+
+func _pulse_indicator():
+	"""Fait pulser l'indicateur brièvement"""
+	if not targeting_indicator:
+		return
+	
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	
+	# Scale up puis down
+	var original_scale = Vector2.ONE
+	tween.tween_property(targeting_indicator, "scale", original_scale * 1.4, 0.12)
+	tween.tween_property(targeting_indicator, "scale", original_scale, 0.25)
 
 func play_cast_animation(spell_type: String, lane: TargetLane):
-	# Jouer une animation de cast selon le type de sort
-	#sprite.play("cast_" + spell_type)
+	# Animation de l'indicateur lors du cast
+	_flash_indicator()
 	
-	# Instancier un effet visuel du sort
+	# Instancier l'effet visuel du sort avec trajectoire courbe
 	spawn_spell_effect(spell_type, lane)
+
+func _flash_indicator():
+	"""Fait flasher l'indicateur lors d'un cast"""
+	if not targeting_indicator:
+		return
+	
+	var original_modulate = targeting_indicator.modulate
+	var flash_color = Color(2.0, 2.0, 2.0, 1.0)  # Super lumineux
+	
+	var tween = create_tween()
+	tween.tween_property(targeting_indicator, "modulate", flash_color, 0.05)
+	tween.tween_property(targeting_indicator, "modulate", original_modulate, 0.15)
 
 func spawn_spell_effect(spell_type: String, lane: TargetLane):
 	var projectile = spell_projectile_scene.instantiate()
 	projectile.position = position + Vector2(50, 0)
 	projectile.spell_type = spell_type
 	
-	# Définir la trajectoire du projectile vers le couloir ciblé
+	# Le projectile part de la position du joueur et va vers le couloir ciblé
 	var target_y = LANE_TOP_Y if lane == TargetLane.TOP else LANE_BOTTOM_Y
 	projectile.target_y = target_y
+	
+	# Passer le type de trajectoire (courbe si c'est vers le haut)
+	projectile.use_curved_trajectory = (lane == TargetLane.TOP)
 	
 	get_parent().add_child(projectile)
 

@@ -1,11 +1,10 @@
-## qte_ui.gd
+## qte_ui.gd - Version adaptée pour spell_1, spell_2, spell_3, spell_4
 extends Control
 
 signal qte_success
 signal qte_failed
 
 @onready var buttons_container: HBoxContainer = $CenterContainer/HBoxContainer
-#@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 var button_sequence: Array = []
 var current_index: int = 0
@@ -20,7 +19,7 @@ var color_success = Color.GREEN
 var color_failed = Color.RED
 var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
 
-
+# Textures des boutons
 @export var texture_x: Texture2D
 @export var texture_a: Texture2D
 @export var texture_b: Texture2D
@@ -36,17 +35,19 @@ var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
 @export var texture_controller_LT: Texture2D
 @export var texture_controller_RT: Texture2D
 
-
-
+# Nouvelles textures pour les sorts (à assigner dans l'éditeur)
+@export var texture_spell_1: Texture2D
+@export var texture_spell_2: Texture2D
+@export var texture_spell_3: Texture2D
+@export var texture_spell_4: Texture2D
 
 func _ready() -> void:
 	hide()
-	#setup(["x","space"],2)
 
 func setup(buttons: Array, duration: float) -> void:
 	"""
 	Configure et démarre le QTE
-	buttons: ["x", "a", "b"] ou ["space", "e"]
+	buttons: ["spell_1", "spell_2", "spell_3"] ou ["x", "a", "b"]
 	duration: temps total en secondes
 	"""
 	button_sequence = buttons.duplicate()
@@ -60,10 +61,8 @@ func setup(buttons: Array, duration: float) -> void:
 	
 	# Créer les boutons visuels
 	_create_button_display()
-	
-	# Afficher et animer
+	# Afficher et animer   
 	show()
-	#animation_player.play("appear")
 
 func _clear_buttons() -> void:
 	"""Supprime tous les boutons existants"""
@@ -82,7 +81,7 @@ func _create_button_display() -> void:
 		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		texture_rect.texture = _get_button_texture(btn_key)
-		
+		texture_rect.pivot_offset = texture_rect.custom_minimum_size / 2
 		# Couleur selon l'état
 		if i == 0:
 			texture_rect.modulate = color_waiting  # Premier bouton actif
@@ -99,6 +98,10 @@ func _create_button_display() -> void:
 func _get_button_texture(button_key: String) -> Texture2D:
 	"""Retourne la texture correspondant au bouton"""
 	match button_key:
+		"spell_1": return texture_spell_1 if texture_spell_1 else texture_x
+		"spell_2": return texture_spell_2 if texture_spell_2 else texture_a
+		"spell_3": return texture_spell_3 if texture_spell_3 else texture_b
+		"spell_4": return texture_spell_4 if texture_spell_4 else texture_e
 		"x": return texture_x
 		"a": return texture_a
 		"b": return texture_b
@@ -135,6 +138,14 @@ func _input(event: InputEvent) -> void:
 func _check_input(event: InputEvent, button: String) -> bool:
 	"""Vérifie si l'input correspond au bouton attendu"""
 	match button:
+		"spell_1":
+			return event.is_action_pressed("spell_1")
+		"spell_2":
+			return event.is_action_pressed("spell_2")
+		"spell_3":
+			return event.is_action_pressed("spell_3")
+		"spell_4":
+			return event.is_action_pressed("spell_4")
 		"space":
 			return event.is_action_pressed("ui_accept")
 		"mouse_left":
@@ -176,25 +187,21 @@ func _pulse_current_button() -> void:
 func _success() -> void:
 	"""Séquence QTE réussie"""
 	is_waiting = false
-	#animation_player.stop()
 	
 	# Tous les boutons en vert
 	for btn in button_nodes:
 		btn.modulate = color_success
-	
-	#animation_player.play("success")
-	await get_tree().create_timer(0.4).timeout
+
 	qte_success.emit()
+	hide()
 
 func _fail() -> void:
 	"""Séquence QTE échouée"""
 	is_waiting = false
-	#animation_player.stop()
 	
 	# Bouton actuel en rouge, reste en gris
 	if current_index < button_nodes.size():
 		button_nodes[current_index].modulate = color_failed
 	
-	#animation_player.play("fail")
-	await get_tree().create_timer(0.4).timeout
 	qte_failed.emit()
+	hide()

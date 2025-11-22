@@ -155,7 +155,7 @@ func spawn_hit_particles():
 	get_parent().add_child(p)
 	p.global_position = global_position
 	for node in get_tree().get_nodes_in_group("GM"):
-		node.add_mana(50)
+		node.add_mana(10)
 	# Effacer les particules après leur durée de vie
 	await get_tree().create_timer(p.lifetime).timeout
 	p.queue_free()

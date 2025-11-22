@@ -27,7 +27,7 @@ func start_qte(buttons: Array, duration: float = 2.0) -> void:
 	
 	# Instancier la scène QTE
 	current_qte = qte_scene.instantiate()
-	print(current_qte)
+	#print(current_qte)
 	add_child(current_qte)
 	
 	# Configurer le QTE
@@ -52,7 +52,6 @@ func _on_qte_failed() -> void:
 
 func _cleanup_qte() -> void:
 	if current_qte:
-		await get_tree().create_timer(0.5).timeout
 		current_qte.queue_free()
 		current_qte = null
 	qte_ended.emit()

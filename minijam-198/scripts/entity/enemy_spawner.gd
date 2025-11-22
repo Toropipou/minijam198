@@ -327,7 +327,7 @@ func select_next_pattern():
 	var available = spawn_patterns.filter(func(p): return p != old_pattern)
 	current_pattern = available[randi() % available.size()]
 	
-	print("Pattern changé : ", old_pattern, " -> ", current_pattern)
+	#print("Pattern changé : ", old_pattern, " -> ", current_pattern)
 
 func _on_spawn_timer_timeout():
 	spawn_next_enemy()
