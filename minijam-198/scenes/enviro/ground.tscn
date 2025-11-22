@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://g54nq31120qp"]
 
-[ext_resource type="Texture2D" uid="uid://c1oqrqxusukd2" path="res://assets/img/background/ground.png" id="1_bd65j"]
+[ext_resource type="Texture2D" uid="uid://c1oqrqxusukd2" path="res://assets/background/ground.png" id="1_bd65j"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i2lgd"]
 size = Vector2(2304, 96)
@@ -8,6 +8,7 @@ size = Vector2(2304, 96)
 [node name="Ground" type="StaticBody2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.81960785, 0.21568628, 0, 1)
 position = Vector2(0, 552)
 texture = ExtResource("1_bd65j")
 centered = false

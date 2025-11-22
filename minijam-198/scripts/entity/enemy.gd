@@ -27,6 +27,7 @@ const WEAKNESS_COLORS = {
 	"earth": Color(0.2, 0.8, 0.2),     # Vert
 	"air": Color(0.984, 0.936, 0.0, 1.0)        # Blanc-bleu
 }
+
 # État
 var is_alive : bool = true
 
@@ -153,7 +154,8 @@ func spawn_hit_particles():
 	# Le parent doit être le parent de l'ennemi, pour survivre au queue_free()
 	get_parent().add_child(p)
 	p.global_position = global_position
-
+	for node in get_tree().get_nodes_in_group("GM"):
+		node.add_mana(50)
 	# Effacer les particules après leur durée de vie
 	await get_tree().create_timer(p.lifetime).timeout
 	p.queue_free()

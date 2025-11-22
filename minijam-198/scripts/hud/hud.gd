@@ -3,15 +3,25 @@ extends CanvasLayer
 
 @onready var score_label = $ScoreLabel
 @onready var start_label = $StartLabel
+@onready var mana_bar = $ManaBar
+@onready var pv_label = $PVLabel  # Nouveau label pour les PV
 
-# Indicateurs de cooldown pour chaque sort
-@onready var cooldown_indicators = {
-	"fire": $SpellCooldowns/FireCooldown,
-	"water": $SpellCooldowns/WaterCooldown,
-	"earth": $SpellCooldowns/EarthCooldown,
-	"air": $SpellCooldowns/AirCooldown
-}
+func _ready():
+	# Connecter le signal du joueur
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		player.health_changed.connect(_on_player_health_changed)
 
+func _on_player_health_changed(current_health: int, max_health: int):
+	pv_label.text = "PV: " + str(current_health) + "/" + str(max_health)
+	
+	# Optionnel : changer la couleur si les PV sont bas
+	if current_health <= max_health * 0.25:  # 25% ou moins
+		pv_label.add_theme_color_override("font_color", Color.RED)
+	elif current_health <= max_health * 0.5:  # 50% ou moins
+		pv_label.add_theme_color_override("font_color", Color.ORANGE)
+	else:
+		pv_label.add_theme_color_override("font_color", Color.WHITE)
 
 func update_score(new_score: int):
 	score_label.text = "SCORE: " + str(new_score)
@@ -22,16 +32,11 @@ func show_start_message():
 
 func hide_start_message():
 	start_label.hide()
+	
+func update_mana(current: float, max_value: float):
+	var percentage = (current / max_value) * 100.0
+	# Mettre à jour ta ProgressBar ou ColorRect
+	mana_bar.value = percentage
 
-func update_cooldown(spell_type: String, progress: float):
-	# progress va de 1.0 (plein cooldown) à 0.0 (prêt)
-	if cooldown_indicators.has(spell_type):
-		var indicator = cooldown_indicators[spell_type]
-		
-		# Si c'est une ProgressBar
-		if indicator is ProgressBar:
-			indicator.value = (1.0 - progress) * 100
-		
-		# Si c'est un ColorRect pour un effet de remplissage
-		elif indicator is ColorRect:
-			indicator.modulate.a = 0.5 if progress > 0 else 1.0
+func show_speed(speed):
+	$SpeedLabel.text = str(speed)
