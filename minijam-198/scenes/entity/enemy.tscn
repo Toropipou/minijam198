@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://dnwkmroyebxay"]
+
+[ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
+size = Vector2(40, 40)
+
+[node name="Enemy" type="Area2D"]
+script = ExtResource("1_ho1e7")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(20, 20)
+shape = SubResource("RectangleShape2D_ho1e7")
+
+[node name="WeaknessLabel" type="Label" parent="."]
+offset_top = 40.0
+offset_right = 40.0
+offset_bottom = 69.0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1

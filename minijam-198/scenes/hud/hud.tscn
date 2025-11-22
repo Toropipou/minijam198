@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://bv1sr2c1i4ye7"]
+
+[ext_resource type="Script" uid="uid://dopso4ocmm37f" path="res://scripts/hud/hud.gd" id="1_48c2t"]
+
+[node name="hud" type="CanvasLayer"]
+script = ExtResource("1_48c2t")
+
+[node name="ScoreLabel" type="Label" parent="."]
+texture_filter = 1
+offset_right = 40.0
+offset_bottom = 29.0
+
+[node name="StartLabel" type="Label" parent="."]
+texture_filter = 1
+offset_right = 40.0
+offset_bottom = 29.0
+
+[node name="SpellCooldowns" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 144.0
+
+[node name="FireCooldown" type="ProgressBar" parent="SpellCooldowns"]
+layout_mode = 2
+
+[node name="WaterCooldown" type="ProgressBar" parent="SpellCooldowns"]
+layout_mode = 2
+
+[node name="EarthCooldown" type="ProgressBar" parent="SpellCooldowns"]
+layout_mode = 2
+
+[node name="AirCooldown" type="ProgressBar" parent="SpellCooldowns"]
+layout_mode = 2
