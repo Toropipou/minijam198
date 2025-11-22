@@ -6,6 +6,7 @@
 size = Vector2(40, 40)
 
 [node name="SpellProjectile" type="Area2D"]
+collision_layer = 2
 script = ExtResource("1_u2b86")
 
 [node name="ColorRect" type="ColorRect" parent="."]

@@ -124,6 +124,11 @@ spell_4={
 
 locale/translations=PackedStringArray("res://addons/maaacks_game_template/base/translations/menus_translations.en.translation", "res://addons/maaacks_game_template/base/translations/menus_translations.fr.translation")
 
+[layer_names]
+
+2d_physics/layer_1="enemy"
+2d_physics/layer_2="proj"
+
 [maaacks_game_template]
 
 copy_path="res://"

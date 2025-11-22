@@ -10,25 +10,23 @@ var weaknesses : Array = ["fire"]  # Par défaut
 var current_weakness_index : int = 0
 
 @onready var visual = $ColorRect
-@onready var weakness_label = $WeaknessLabel
+@onready var weakness_container = $WeaknessContainer  # HBoxContainer
 @onready var collision_shape = $CollisionShape2D
 
-# Symboles de carte pour chaque type de sort
-const WEAKNESS_SYMBOLS = {
-	"fire": "♥",    # Coeur
-	"water": "♦",   # Carreau
-	"earth": "♣",   # Trèfle
-	"air": "♠"      # Pique
+# Preload des textures pour chaque type de sort
+const WEAKNESS_TEXTURES = {
+	"fire": preload("res://assets/UI/coeur.png"),
+	"water": preload("res://assets/UI/carreau.png"),
+	"earth": preload("res://assets/UI/trefle.png"),
+	"air": preload("res://assets/UI/pique.png")
 }
-
 # Couleurs pour les sorts
 const WEAKNESS_COLORS = {
 	"fire": Color(1.0, 0.3, 0.1),      # Rouge
 	"water": Color(0.1, 0.5, 1.0),     # Bleu
 	"earth": Color(0.2, 0.8, 0.2),     # Vert
-	"air": Color(0.979, 0.915, 0.618, 1.0)        # Blanc-bleu
+	"air": Color(0.984, 0.936, 0.0, 1.0)        # Blanc-bleu
 }
-
 # État
 var is_alive : bool = true
 
@@ -70,9 +68,6 @@ func receive_spell(spell_type: String):
 		hit_wrong_spell(spell_type)
 
 func hit_correct_weakness(spell_type: String):
-	# Effet visuel de succès
-	flash_color(WEAKNESS_COLORS[spell_type], 0.3)
-	
 	# Passer à la faiblesse suivante
 	current_weakness_index += 1
 	
@@ -86,11 +81,14 @@ func hit_correct_weakness(spell_type: String):
 		var remaining = weaknesses.size() - current_weakness_index
 		weakness_hit.emit(self, remaining)
 		update_weakness_display()
+		
+		# Effet visuel de succès APRÈS la mise à jour
+		flash_color(WEAKNESS_COLORS[spell_type], 0.3)
 
 func hit_wrong_spell(spell_type: String):
 	# Effet visuel d'erreur (flash rouge)
 	wrong_spell_used.emit(self, spell_type)
-	flash_color(Color(1.0, 0.2, 0.2), 0.05)
+	flash_color(Color(1.0, 0.2, 0.2), 0.2)
 
 func flash_color(color: Color, duration: float):
 	var original_color = visual.color
@@ -99,37 +97,63 @@ func flash_color(color: Color, duration: float):
 	tween.tween_property(visual, "color", original_color, duration / 2)
 
 func update_weakness_display():
-	if not weakness_label:
+	if not weakness_container:
 		return
 	
-	# Construire la chaîne de symboles pour les faiblesses restantes
+	# Nettoyer les icônes existantes
+	for child in weakness_container.get_children():
+		child.queue_free()
+	
+	# Construire les icônes pour les faiblesses restantes
 	var remaining_weaknesses = weaknesses.slice(current_weakness_index)
-	var display_text = ""
 	
-	for weakness_type in remaining_weaknesses:
-		if WEAKNESS_SYMBOLS.has(weakness_type):
-			display_text += WEAKNESS_SYMBOLS[weakness_type] + " "
+	for i in range(remaining_weaknesses.size()):
+		var weakness_type = remaining_weaknesses[i]
+		
+		if WEAKNESS_TEXTURES.has(weakness_type):
+			# Créer un TextureRect pour cette faiblesse
+			var texture_rect = TextureRect.new()
+			texture_rect.texture = WEAKNESS_TEXTURES[weakness_type]
+			texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+			texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			texture_rect.custom_minimum_size = Vector2(32, 32)  # Taille des icônes
+			
+			# Colorer l'icône actuelle (la première)
+			if i == 0:
+				texture_rect.modulate = WEAKNESS_COLORS[weakness_type]
+			else:
+				# Les icônes suivantes sont plus transparentes
+				texture_rect.modulate = Color(1, 1, 1, 0.6)
+			
+			weakness_container.add_child(texture_rect)
 	
-	weakness_label.text = display_text.strip_edges()
-	
-	# Colorer le label selon la faiblesse actuelle
+	# Mise à jour de la couleur du ColorRect selon la faiblesse actuelle
 	if remaining_weaknesses.size() > 0:
 		var current_weakness = remaining_weaknesses[0]
-		weakness_label.modulate = WEAKNESS_COLORS[current_weakness]
-	
-		# Mise à jour de la couleur du ColorRect
-		visual.color = WEAKNESS_COLORS[current_weakness]
+		visual.color = WEAKNESS_COLORS[current_weakness].darkened(0.3)
 
 func destroy():
 	is_alive = false
-	
+	spawn_hit_particles()
 	# Animation de destruction
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(visual, "modulate:a", 0.0, 0.3)
 	tween.tween_property(visual, "scale", Vector2(1.5, 1.5), 0.3)
-	tween.tween_property(weakness_label, "modulate:a", 0.0, 0.3)
+	tween.tween_property(weakness_container, "modulate:a", 0.0, 0.3)
 	
 	await tween.finished
 	destroyed.emit(self)
 	queue_free()
+
+func spawn_hit_particles():
+	var p = $hit_particle.duplicate()
+	p.emitting = true
+	
+	# Le parent doit être le parent de l'ennemi, pour survivre au queue_free()
+	get_parent().add_child(p)
+	p.global_position = global_position
+
+	# Effacer les particules après leur durée de vie
+	await get_tree().create_timer(p.lifetime).timeout
+	p.queue_free()
