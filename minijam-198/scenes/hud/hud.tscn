@@ -1,9 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://bv1sr2c1i4ye7"]
+[gd_scene load_steps=15 format=3 uid="uid://bv1sr2c1i4ye7"]
 
 [ext_resource type="Script" uid="uid://dopso4ocmm37f" path="res://scripts/hud/hud.gd" id="1_48c2t"]
 [ext_resource type="Theme" uid="uid://2p6glpubmhup" path="res://resources/themes/lab.tres" id="2_cgeww"]
 [ext_resource type="Shader" uid="uid://6c54jm7giov1" path="res://assets/shader/QTE_UI.gdshader" id="3_c45xl"]
 [ext_resource type="Shader" uid="uid://ns7ovbtxmqef" path="res://assets/shader/test.gdshader" id="4_0bx4p"]
+[ext_resource type="Texture2D" uid="uid://ylr0h62llpd0" path="res://assets/UI/coeur.png" id="5_n56i7"]
+[ext_resource type="Texture2D" uid="uid://2iqg8uxoliqb" path="res://assets/UI/pic.png" id="6_mq0y1"]
+[ext_resource type="Texture2D" uid="uid://dho4kmmuu6oa5" path="res://assets/UI/trefle.png" id="7_go0ap"]
+[ext_resource type="Texture2D" uid="uid://kt6obl55qlbm" path="res://assets/UI/carreau.png" id="8_mq0y1"]
+[ext_resource type="Texture2D" uid="uid://bo4owerx1wixp" path="res://assets/UI/base.png" id="9_go0ap"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0bx4p"]
 shader = ExtResource("3_c45xl")
@@ -81,3 +86,38 @@ material = SubResource("ShaderMaterial_mgtrf")
 offset_top = -73.0
 offset_right = 1280.0
 offset_bottom = 644.0
+
+[node name="Roue" type="Node2D" parent="."]
+texture_filter = 1
+position = Vector2(-145, 6)
+
+[node name="Spell1" type="Sprite2D" parent="Roue"]
+texture_filter = 1
+position = Vector2(305.00006, 409)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("5_n56i7")
+
+[node name="Spell4" type="Sprite2D" parent="Roue"]
+texture_filter = 1
+position = Vector2(267.00006, 380.99997)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("6_mq0y1")
+
+[node name="Spell3" type="Sprite2D" parent="Roue"]
+texture_filter = 1
+position = Vector2(267.00006, 444)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("7_go0ap")
+
+[node name="Spell2" type="Sprite2D" parent="Roue"]
+texture_filter = 1
+position = Vector2(229, 410.00003)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("8_mq0y1")
+
+[node name="Base" type="Sprite2D" parent="Roue"]
+visible = false
+texture_filter = 1
+position = Vector2(268, 415)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("9_go0ap")

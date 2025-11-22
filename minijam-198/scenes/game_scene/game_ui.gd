@@ -251,11 +251,13 @@ func _handle_qte_input() -> void:
 	
 	# Démarrer le QTE au premier appui
 	if trigger_just_pressed and not qte_in_progress:
+		hud.hide_roue()
 		_start_mana_recharge_qte()
 		trigger_pressed = true
 	
 	# Annuler le QTE si la gâchette est relâchée
 	if trigger_just_released and qte_in_progress:
+		hud.show_roue()
 		_cancel_mana_recharge_qte()
 		trigger_pressed = false
 
@@ -296,7 +298,7 @@ func _cancel_mana_recharge_qte() -> void:
 
 func _on_qte_started() -> void:
 	"""Appelé quand le QTE démarre"""
-	# Optionnel : son, vibration controller, etc.
+	hud.hide_roue()
 	pass
 
 func _on_qte_success() -> void:
@@ -320,7 +322,7 @@ func _on_qte_success() -> void:
 	
 	if hud.has_method("show_mana_refill_effect"):
 		hud.show_mana_refill_effect()
-	
+	hud.show_roue()
 	# 4. BONUS PETIT SCORE
 	score += 200
 	
@@ -341,7 +343,7 @@ func _on_qte_failed() -> void:
 	
 	if hud.has_method("show_qte_failed_effect"):
 		hud.show_qte_failed_effect()
-	
+	hud.show_roue()
 	# Désactiver slow motion
 	_exit_slow_motion()
 	
@@ -353,7 +355,7 @@ func _on_qte_ended() -> void:
 	for i in range(8):await get_tree().process_frame
 	qte_in_progress = false
 	trigger_pressed = false
-
+	hud.show_roue()
 #region SLOW MOTION & VFX
 
 func _enter_slow_motion() -> void:
