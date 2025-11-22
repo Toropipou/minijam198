@@ -29,6 +29,13 @@ var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
 @export var texture_f: Texture2D
 @export var texture_mouse_left: Texture2D
 @export var texture_mouse_right: Texture2D
+@export var texture_controller_A: Texture2D
+@export var texture_controller_B: Texture2D
+@export var texture_controller_Y: Texture2D
+@export var texture_controller_X: Texture2D
+@export var texture_controller_LT: Texture2D
+@export var texture_controller_RT: Texture2D
+
 
 
 

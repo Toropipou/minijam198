@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bkbtnoddb08ea"]
+[gd_scene load_steps=14 format=3 uid="uid://bkbtnoddb08ea"]
 
 [ext_resource type="Script" uid="uid://cym1uuhydiwq6" path="res://qte_ui.gd" id="1_oahjx"]
 [ext_resource type="Texture2D" uid="uid://cf5mwpkkrgogc" path="res://assets/UI/Keyboard Letters and Symbols.png" id="2_1fsp5"]
+[ext_resource type="Texture2D" uid="uid://bc5lgxikjphdr" path="res://assets/UI/gdb-xbox-2.png" id="3_yak2t"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yak2t"]
 atlas = ExtResource("2_1fsp5")
@@ -19,6 +20,30 @@ region = Rect2(64.334175, 93.399895, 16.64933, 16.910591)
 atlas = ExtResource("2_1fsp5")
 region = Rect2(0, 0, 15.105026, 15.6757765)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_q6lo0"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(17, 192, 14, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gactx"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(16, 225, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edh1y"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(16, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f546g"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(17, 176, 15, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1e2c"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(368, 47, 16, 17)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0mu5"]
+atlas = ExtResource("3_yak2t")
+region = Rect2(368, 64, 16, 16)
+
 [node name="QTE_UI" type="Control"]
 texture_filter = 1
 layout_mode = 3
@@ -32,6 +57,12 @@ texture_x = SubResource("AtlasTexture_yak2t")
 texture_a = SubResource("AtlasTexture_r7qwg")
 texture_space = SubResource("AtlasTexture_1fsp5")
 texture_mouse_left = SubResource("AtlasTexture_pcjbv")
+texture_controller_A = SubResource("AtlasTexture_q6lo0")
+texture_controller_B = SubResource("AtlasTexture_gactx")
+texture_controller_Y = SubResource("AtlasTexture_edh1y")
+texture_controller_X = SubResource("AtlasTexture_f546g")
+texture_controller_LT = SubResource("AtlasTexture_c1e2c")
+texture_controller_RT = SubResource("AtlasTexture_o0mu5")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 0
