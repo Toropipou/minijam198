@@ -4,6 +4,9 @@ extends CharacterBody2D
 @onready var sprite = $ColorRect
 @onready var game_manager = get_parent().get_parent().get_parent()
 @onready var spell_projectile_scene = preload("res://scenes/entity/spell_projectile.tscn")
+
+var can_spell
+
 # Mapping des touches aux sorts
 const SPELL_KEYS = {
 	"spell_1": "fire",    # Par exemple touche 1 ou Z

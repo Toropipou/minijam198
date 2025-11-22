@@ -19,8 +19,8 @@ var spell_cooldowns := {
 	"earth": 0.0,
 	"air": 0.0
 }
-const SPELL_COOLDOWN_TIME : float = 2.0
-
+const SPELL_COOLDOWN_TIME : float = 0.5
+var global_spell_cooldown
 # Références
 @onready var viewport = $ViewportContainer/ConfigurableSubViewport
 @onready var player = $ViewportContainer/ConfigurableSubViewport/Player
@@ -45,9 +45,8 @@ func new_game():
 	spawner.clear_all_enemies()
 	active_enemies.clear()
 	
-	# Reset cooldowns
-	for spell in spell_cooldowns.keys():
-		spell_cooldowns[spell] = 0.0
+	# Reset cooldown global
+	global_spell_cooldown = 0.0
 	
 	hud.update_score(score)
 	hud.show_start_message()
@@ -75,11 +74,10 @@ func _process(delta: float) -> void:
 			if enemy.position.x < screen_left:
 				_on_enemy_escaped(enemy)
 	
-	# Mettre à jour les cooldowns
-	for spell in spell_cooldowns.keys():
-		if spell_cooldowns[spell] > 0:
-			spell_cooldowns[spell] -= delta
-			hud.update_cooldown(spell, spell_cooldowns[spell] / SPELL_COOLDOWN_TIME)
+	# Mettre à jour le cooldown global
+	if global_spell_cooldown > 0:
+		global_spell_cooldown -= delta
+		hud.update_cooldown("global", global_spell_cooldown / SPELL_COOLDOWN_TIME)
 	
 	# Score augmente avec le temps
 	score += delta * 10
@@ -153,12 +151,12 @@ func _on_wave_completed(wave_number: int):
 		hud.show_wave_complete(wave_number + 1)
 
 func cast_spell(spell_type: String):
-	# Vérifier le cooldown
-	if spell_cooldowns[spell_type] > 0:
+	# Vérifier le cooldown global
+	if global_spell_cooldown > 0:
 		return
 	
-	# Activer le cooldown
-	spell_cooldowns[spell_type] = SPELL_COOLDOWN_TIME
+	# Activer le cooldown global
+	global_spell_cooldown = SPELL_COOLDOWN_TIME
 	
 	# Trouver l'ennemi le plus proche
 	var closest_enemy = get_closest_enemy()

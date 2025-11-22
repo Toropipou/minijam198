@@ -15,3 +15,6 @@ offset_bottom = 40.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(20, 20)
 shape = SubResource("RectangleShape2D_dovo2")
+
+[node name="CooldownSpell" type="Timer" parent="."]
+wait_time = 0.5

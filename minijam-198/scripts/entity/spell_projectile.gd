@@ -13,7 +13,7 @@ const SPELL_COLORS = {
 	"fire": Color(1.0, 0.3, 0.1),      # Rouge-orange
 	"water": Color(0.1, 0.5, 1.0),     # Bleu
 	"earth": Color(0.2, 0.8, 0.2),     # Vert
-	"air": Color(0.979, 0.915, 0.618, 1.0)       # Blanc-bleu clair
+	"air": Color(0.912, 0.862, 0.0, 1.0)       # Blanc-bleu clair
 }
 
 func _ready() -> void:
