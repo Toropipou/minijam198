@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2xjkcsx5febo"]
+
+[ext_resource type="Script" uid="uid://b5mipu5quo7ct" path="res://scripts/hud/qte_manager.gd" id="1_bdxgs"]
+
+[node name="QTE_Manager" type="Node"]
+script = ExtResource("1_bdxgs")
