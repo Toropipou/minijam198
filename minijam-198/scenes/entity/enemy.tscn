@@ -1,13 +1,341 @@
-[gd_scene load_steps=4 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=52 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
-[ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
+[ext_resource type="Texture2D" uid="uid://bcilbyhthfyh2" path="res://assets/CHARA_VISUELS/Reine/Reine_Carreau.png" id="2_w7fs4"]
+[ext_resource type="Texture2D" uid="uid://iua5iasxk18q" path="res://assets/CHARA_VISUELS/Reine/Reine_Coeur.png" id="3_fyh0p"]
+[ext_resource type="Texture2D" uid="uid://dxhtvrnhaytiy" path="res://assets/CHARA_VISUELS/Reine/Reine_Pique.png" id="4_d0u07"]
+[ext_resource type="Texture2D" uid="uid://d3rtqd15o4etp" path="res://assets/CHARA_VISUELS/Reine/Reine_Trefle.png" id="5_6hoso"]
+[ext_resource type="Texture2D" uid="uid://ctmun26kxvkio" path="res://assets/CHARA_VISUELS/Roi/Roi_Carreau.png" id="6_ap6p4"]
+[ext_resource type="Texture2D" uid="uid://ceatnmopk1acx" path="res://assets/CHARA_VISUELS/Roi/Roi_Coeur.png" id="7_xutuw"]
+[ext_resource type="Texture2D" uid="uid://6nx02bcj70l2" path="res://assets/CHARA_VISUELS/Roi/Roi_Pique.png" id="8_iy134"]
+[ext_resource type="Texture2D" uid="uid://csnrojjwrj361" path="res://assets/CHARA_VISUELS/Roi/Roi_Trefle.png" id="9_p2jcx"]
+[ext_resource type="Texture2D" uid="uid://bacfiffifaok6" path="res://assets/CHARA_VISUELS/Valet/Valet_Carreau.png" id="10_ryhgo"]
+[ext_resource type="Texture2D" uid="uid://dj161rbhj4tbm" path="res://assets/CHARA_VISUELS/Valet/Valet_Coeur.png" id="11_qsqmi"]
+[ext_resource type="Texture2D" uid="uid://gynmb8slgato" path="res://assets/CHARA_VISUELS/Valet/Valet_Pique.png" id="12_ofb5c"]
+[ext_resource type="Texture2D" uid="uid://c2k5yg2m62xv5" path="res://assets/CHARA_VISUELS/Reine/Reine_Couronne_Carreau.png" id="13_gt5ad"]
+[ext_resource type="Texture2D" uid="uid://bundd4yw0macl" path="res://assets/CHARA_VISUELS/Reine/Reine_Couronne_Coeur.png" id="14_hwqft"]
+[ext_resource type="Texture2D" uid="uid://cfwkwvko4nyk7" path="res://assets/CHARA_VISUELS/Reine/Reine_Couronne_Pique.png" id="15_v8xkk"]
+[ext_resource type="Texture2D" uid="uid://cr2da1p4co7nx" path="res://assets/CHARA_VISUELS/Reine/Reine_Couronne_Trefle.png" id="16_33xuu"]
+[ext_resource type="Texture2D" uid="uid://dcvi4y6n4661y" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Carreau.png" id="17_fv7dh"]
+[ext_resource type="Texture2D" uid="uid://b4yb1b7c43hdq" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Coeur.png" id="18_f2bt2"]
+[ext_resource type="Texture2D" uid="uid://cl18206o3avdu" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Pique.png" id="19_dt0sv"]
+[ext_resource type="Texture2D" uid="uid://bvwwx2t78wafk" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Trefle.png" id="20_veaxh"]
+[ext_resource type="Texture2D" uid="uid://ca2u4rtmjhby" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Carreau.png" id="21_wtgks"]
+[ext_resource type="Texture2D" uid="uid://dxmxfox74a554" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Coeur.png" id="22_8ku25"]
+[ext_resource type="Texture2D" uid="uid://b8530pj8wyxse" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Pique.png" id="23_c3nn8"]
+[ext_resource type="Texture2D" uid="uid://c7qyrsolpxdqo" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Trefle.png" id="24_koem0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
 size = Vector2(40, 40)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ml7kf"]
+atlas = ExtResource("2_w7fs4")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gt5ad"]
+atlas = ExtResource("3_fyh0p")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hwqft"]
+atlas = ExtResource("4_d0u07")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v8xkk"]
+atlas = ExtResource("5_6hoso")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_33xuu"]
+atlas = ExtResource("6_ap6p4")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fv7dh"]
+atlas = ExtResource("7_xutuw")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f2bt2"]
+atlas = ExtResource("8_iy134")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dt0sv"]
+atlas = ExtResource("9_p2jcx")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_veaxh"]
+atlas = ExtResource("10_ryhgo")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtgks"]
+atlas = ExtResource("11_qsqmi")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ku25"]
+atlas = ExtResource("12_ofb5c")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ffrjq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ml7kf")
+}],
+"loop": true,
+"name": &"Reine_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gt5ad")
+}],
+"loop": true,
+"name": &"Reine_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hwqft")
+}],
+"loop": true,
+"name": &"Reine_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v8xkk")
+}],
+"loop": true,
+"name": &"Reine_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_33xuu")
+}],
+"loop": true,
+"name": &"Roi_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fv7dh")
+}],
+"loop": true,
+"name": &"Roi_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f2bt2")
+}],
+"loop": true,
+"name": &"Roi_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dt0sv")
+}],
+"loop": true,
+"name": &"Roi_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_veaxh")
+}],
+"loop": true,
+"name": &"Valet_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtgks")
+}],
+"loop": true,
+"name": &"Valet_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ku25")
+}],
+"loop": true,
+"name": &"Valet_Pique",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"Valet_Trefle",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kf1ip"]
+atlas = ExtResource("13_gt5ad")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oxd8c"]
+atlas = ExtResource("14_hwqft")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvhnk"]
+atlas = ExtResource("15_v8xkk")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7dhk"]
+atlas = ExtResource("16_33xuu")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p4p1s"]
+atlas = ExtResource("17_fv7dh")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ubwru"]
+atlas = ExtResource("18_f2bt2")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oke61"]
+atlas = ExtResource("19_dt0sv")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktfrg"]
+atlas = ExtResource("20_veaxh")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7w1fe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kf1ip")
+}],
+"loop": true,
+"name": &"Reine_Couronne_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oxd8c")
+}],
+"loop": true,
+"name": &"Reine_Couronne_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nvhnk")
+}],
+"loop": true,
+"name": &"Reine_Couronne_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7dhk")
+}],
+"loop": true,
+"name": &"Reine_Couronne_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p4p1s")
+}],
+"loop": true,
+"name": &"Roi_Couronne_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ubwru")
+}],
+"loop": true,
+"name": &"Roi_Couronne_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oke61")
+}],
+"loop": true,
+"name": &"Roi_Couronne_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ktfrg")
+}],
+"loop": true,
+"name": &"Roi_Couronne_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"Sans_Couronne",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_doq3p"]
+atlas = ExtResource("21_wtgks")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ejd0a"]
+atlas = ExtResource("22_8ku25")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5u5q"]
+atlas = ExtResource("23_c3nn8")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nfmt4"]
+atlas = ExtResource("24_koem0")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x6fyo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_doq3p")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ejd0a")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5u5q")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nfmt4")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"Roi_sans_spectre",
+"speed": 5.0
+}]
+
 [node name="Enemy" type="Area2D"]
-scale = Vector2(2, 2)
+texture_filter = 1
 collision_mask = 2
 script = ExtResource("1_ho1e7")
 
@@ -44,16 +372,21 @@ scale_amount_max = 4.0
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 0.5
-offset_top = 43.5
-offset_right = 88.5
-offset_bottom = 83.5
+offset_top = 40.0
+offset_right = 88.0
+offset_bottom = 80.0
 grow_vertical = 2
-scale = Vector2(0.5, 0.5)
 
-[node name="TextureRect" type="TextureRect" parent="WeaknessContainer"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-texture = ExtResource("2_lin2w")
-expand_mode = 3
-stretch_mode = 5
+[node name="Perso" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_ffrjq")
+animation = &"Valet_Trefle"
+
+[node name="Couronne" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_7w1fe")
+animation = &"Sans_Couronne"
+
+[node name="Sceptre" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_x6fyo")
+animation = &"Roi_sans_spectre"
