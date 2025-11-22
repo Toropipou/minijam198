@@ -8,6 +8,7 @@ extends CharacterBody2D
 # Indicateur de visée
 @onready var targeting_indicator = $TargetingIndicator  # Nœud qui contiendra la flèche
 var arrow_size_base := Vector2(2,2)
+
 # Système de PV
 signal health_changed(current_health: int, max_health: int)
 
@@ -30,10 +31,8 @@ var current_target_lane : TargetLane = TargetLane.BOTTOM
 const LANE_TOP_Y : float = 200.0
 const LANE_BOTTOM_Y : float = 547.0
 
-# Paramètres de l'indicateur rotatif
-const INDICATOR_DISTANCE : float = 20.0  # Distance de la flèche par rapport au centre du joueur
-const INDICATOR_ANGLE_TOP : float = -45.0  # Angle pour le couloir haut (en degrés)
-const INDICATOR_ANGLE_BOTTOM : float = 0.0  # Angle pour le couloir bas (horizontal)
+# Paramètres de l'indicateur rotatif (comme dans CarryBallChallenge)
+const INDICATOR_DISTANCE : float = 130.0  # Distance de la flèche par rapport au centre du joueur
 
 func _ready() -> void:
 	add_to_group("player")
@@ -44,7 +43,7 @@ func _ready() -> void:
 	_setup_targeting_indicator()
 	
 	# Initialiser la rotation de l'indicateur
-	update_visual_indicator()
+	update_arrow_direction()
 	
 	# Animation idle subtile
 	_start_indicator_idle_animation()
@@ -75,6 +74,9 @@ func _process(_delta: float) -> void:
 	elif Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("lane_down"):
 		switch_to_bottom_lane()
 	
+	# Mettre à jour la direction de la flèche en continu
+	update_arrow_direction()
+	
 	# Détecter les inputs de sorts
 	for action in SPELL_KEYS.keys():
 		if Input.is_action_just_pressed(action):
@@ -90,6 +92,24 @@ func _process(_delta: float) -> void:
 				print("Impossible de lancer le sort (mana ou cooldown)")
 			
 			break
+
+func update_arrow_direction():
+	"""Met à jour la direction de la flèche pour pointer vers le couloir ciblé"""
+	if not is_instance_valid(targeting_indicator):
+		return
+	
+	# Déterminer la position cible selon le couloir
+	var target_y = LANE_TOP_Y if current_target_lane == TargetLane.TOP else LANE_BOTTOM_Y
+	
+	# Position cible dans le monde
+	var target_position = Vector2(global_position.x + INDICATOR_DISTANCE, target_y)
+	
+	# Calculer la direction depuis le joueur vers la cible
+	var direction = (target_position - global_position).normalized()
+	var angle = direction.angle()
+	
+	# Appliquer la rotation à la flèche
+	targeting_indicator.rotation = angle
 
 func take_damage(amount: int) -> void:
 	if amount <= 0:
@@ -130,45 +150,11 @@ func get_main_menu_scene_path() -> String:
 	
 func switch_to_top_lane():
 	current_target_lane = TargetLane.TOP
-	update_visual_indicator()
 	print("🎯 Ciblage : COULOIR HAUT")
 
 func switch_to_bottom_lane():
 	current_target_lane = TargetLane.BOTTOM
-	update_visual_indicator()
 	print("🎯 Ciblage : COULOIR BAS")
-
-func update_visual_indicator():
-	"""Fait tourner l'indicateur vers l'angle du couloir ciblé"""
-	if not targeting_indicator:
-		return
-	
-	# Calculer l'angle cible en radians
-	var target_angle_deg = INDICATOR_ANGLE_BOTTOM if current_target_lane == TargetLane.BOTTOM else INDICATOR_ANGLE_TOP
-	var target_angle_rad = deg_to_rad(target_angle_deg)
-	
-	# Animation douce de rotation
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.tween_property(targeting_indicator, "rotation", target_angle_rad, 0.3)
-	
-	# Effet de pulsation pour feedback
-	_pulse_indicator()
-
-func _pulse_indicator():
-	"""Fait pulser l'indicateur brièvement"""
-	if not targeting_indicator:
-		return
-	
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_ELASTIC)
-	
-	# Scale up puis down
-	var original_scale = Vector2.ONE
-	tween.tween_property(targeting_indicator, "scale", original_scale * 1.4, 0.12)
-	tween.tween_property(targeting_indicator, "scale", original_scale, 0.25)
 
 func play_cast_animation(spell_type: String, lane: TargetLane):
 	# Animation de l'indicateur lors du cast
