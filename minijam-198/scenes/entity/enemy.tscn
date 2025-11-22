@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=4 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
+[ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
 size = Vector2(40, 40)
 
 [node name="Enemy" type="Area2D"]
+scale = Vector2(2, 2)
 collision_mask = 2
 script = ExtResource("1_ho1e7")
 
@@ -42,7 +44,16 @@ scale_amount_max = 4.0
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_top = 40.0
-offset_right = 88.0
-offset_bottom = 80.0
+offset_left = 0.5
+offset_top = 43.5
+offset_right = 88.5
+offset_bottom = 83.5
 grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+
+[node name="TextureRect" type="TextureRect" parent="WeaknessContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("2_lin2w")
+expand_mode = 3
+stretch_mode = 5

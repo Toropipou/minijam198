@@ -15,10 +15,10 @@ var current_weakness_index : int = 0
 
 # Preload des textures pour chaque type de sort
 const WEAKNESS_TEXTURES = {
-	"fire": preload("res://assets/UI/coeur.png"),
-	"water": preload("res://assets/UI/carreau.png"),
-	"earth": preload("res://assets/UI/trefle.png"),
-	"air": preload("res://assets/UI/pique.png")
+	"fire": preload("res://assets/UI/coeursymbole.png"),
+	"water": preload("res://assets/UI/carreausymbole.png"),
+	"earth": preload("res://assets/UI/treflesymbole.png"),
+	"air": preload("res://assets/UI/picsymbole.png")
 }
 # Couleurs pour les sorts
 const WEAKNESS_COLORS = {

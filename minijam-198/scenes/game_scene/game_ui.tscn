@@ -34,6 +34,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
@@ -42,7 +44,7 @@ stretch = true
 handle_input_locally = false
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
-size = Vector2i(1280, 720)
+size = Vector2i(2560, 1440)
 render_target_update_mode = 4
 script = ExtResource("11_ulq3g")
 
@@ -51,15 +53,18 @@ script = ExtResource("11_ulq3g")
 [node name="Bg" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_vbgr5")]
 
 [node name="Player" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_ul61k")]
-position = Vector2(151, 547)
+position = Vector2(295, 826)
+scale = Vector2(2, 2)
 
 [node name="hud" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("8_bqcs8")]
 
 [node name="Ground" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("9_onvsj")]
-position = Vector2(0, 36)
+position = Vector2(7, 358)
 
 [node name="EnemySpawner" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("10_8qp3c")]
 position = Vector2(1214, 520)
+spawn_position_top = Vector2(1920, 200)
+spawn_position_bottom = Vector2(1920, 826)
 
 [node name="GameTimer" type="Node" parent="."]
 script = ExtResource("12_gpor5")
