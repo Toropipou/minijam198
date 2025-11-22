@@ -1,0 +1,42 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkbtnoddb08ea"]
+
+[ext_resource type="Script" uid="uid://cym1uuhydiwq6" path="res://qte_ui.gd" id="1_oahjx"]
+[ext_resource type="Texture2D" uid="uid://cf5mwpkkrgogc" path="res://assets/UI/Keyboard Letters and Symbols.png" id="2_1fsp5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yak2t"]
+atlas = ExtResource("2_1fsp5")
+region = Rect2(111.57057, 64.09526, 16.429428, 16.492088)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7qwg"]
+atlas = ExtResource("2_1fsp5")
+region = Rect2(0, 31.983639, 16.905586, 16.46302)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1fsp5"]
+atlas = ExtResource("2_1fsp5")
+region = Rect2(64.334175, 93.399895, 16.64933, 16.910591)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcjbv"]
+atlas = ExtResource("2_1fsp5")
+region = Rect2(0, 0, 15.105026, 15.6757765)
+
+[node name="QTE_UI" type="Control"]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oahjx")
+texture_x = SubResource("AtlasTexture_yak2t")
+texture_a = SubResource("AtlasTexture_r7qwg")
+texture_space = SubResource("AtlasTexture_1fsp5")
+texture_mouse_left = SubResource("AtlasTexture_pcjbv")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
+layout_mode = 2
