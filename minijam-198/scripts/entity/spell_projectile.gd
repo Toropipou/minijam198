@@ -3,7 +3,7 @@ extends Area2D
 
 var spell_type : String = "Coeur"
 var speed : float = 1650.0
-var target_y : float = 300.0  # Position Y du couloir ciblé
+var target_y : float = 350.0  # Position Y du couloir ciblé
 
 @onready var visual = $AnimatedSprite2D
 @onready var particles = $particles

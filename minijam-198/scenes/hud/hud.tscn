@@ -1,7 +1,8 @@
-[gd_scene load_steps=21 format=3 uid="uid://bv1sr2c1i4ye7"]
+[gd_scene load_steps=22 format=3 uid="uid://bv1sr2c1i4ye7"]
 
 [ext_resource type="Script" uid="uid://dopso4ocmm37f" path="res://scripts/hud/hud.gd" id="1_48c2t"]
 [ext_resource type="Theme" uid="uid://2p6glpubmhup" path="res://resources/themes/lab.tres" id="2_cgeww"]
+[ext_resource type="FontFile" uid="uid://dyu52g0fmdtj0" path="res://assets/Jack Armstrong.ttf" id="3_558d4"]
 [ext_resource type="Shader" uid="uid://6c54jm7giov1" path="res://assets/shader/QTE_UI.gdshader" id="3_c45xl"]
 [ext_resource type="Shader" uid="uid://bnwmisckic7uu" path="res://bar_cranté.gdshader" id="3_q6mn5"]
 [ext_resource type="Shader" uid="uid://ns7ovbtxmqef" path="res://assets/shader/test.gdshader" id="4_0bx4p"]
@@ -70,8 +71,8 @@ shader_parameter/universal_border_size = 0.12800000608
 shader_parameter/horizontal_border_size = 0.5
 shader_parameter/inner_border_thickness_multiplier = 0.5
 shader_parameter/outer_border_size = 0.5
-shader_parameter/slant_amount = -0.004999976487500002
-shader_parameter/scale = -0.007999952879999994
+shader_parameter/slant_amount = -0.0049999764875
+shader_parameter/scale = -0.00799995287999999
 shader_parameter/slant_clip_margin = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0bx4p"]
@@ -124,11 +125,16 @@ script = ExtResource("1_48c2t")
 
 [node name="ScoreLabel" type="Label" parent="."]
 texture_filter = 1
-offset_left = 1239.0
-offset_top = 8.0
-offset_right = 1425.0
-offset_bottom = 92.0
-pivot_offset = Vector2(92, 41)
+offset_left = 708.0
+offset_top = 39.0
+offset_right = 1641.0
+offset_bottom = 86.0
+pivot_offset = Vector2(143.19995, 29.450012)
+theme_override_fonts/font = ExtResource("3_558d4")
+theme_override_font_sizes/font_size = 41
+text = "Score : "
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="SpeedLabel" type="Label" parent="."]
 visible = false
@@ -237,4 +243,4 @@ offset_left = 24.0
 offset_top = 15.0
 offset_right = 64.0
 offset_bottom = 55.0
-scale = Vector2(1.8, 2)
+scale = Vector2(1.2, 1.5)

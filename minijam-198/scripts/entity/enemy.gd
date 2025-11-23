@@ -46,9 +46,10 @@ const WEAKNESS_COLORS = {
 
 # État
 var is_alive : bool = true
-
+var initial_sprites_scale : Vector2 = Vector2.ONE
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+	initial_sprites_scale = sprites.scale
 	update_weakness_display()
 	initial_y = position.y
 	setup_dust_particles()
@@ -88,7 +89,7 @@ func setup_dust_particles():
 	# Positionnement au niveau des pieds
 	
 	if character_type=="Roi":dust_particles.position = Vector2(20, 40)
-	else:dust_particles.position = Vector2(40, 40)
+	else:dust_particles.position = Vector2(40, +80)
 
 func start_hopping_animation():
 	"""Animation de petits sauts pour les ennemis au sol"""
@@ -106,7 +107,7 @@ func start_hopping_animation():
 	hop_tween.tween_property(
 		sprites,
 		"scale",
-		Vector2(1.0 + squash_intensity, 1.0 - squash_intensity),
+		initial_sprites_scale * Vector2(1.0 + squash_intensity, 1.0 - squash_intensity),
 		hop_duration * 0.15
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
@@ -121,14 +122,14 @@ func start_hopping_animation():
 	hop_tween.parallel().tween_property(
 		sprites,
 		"scale",
-		Vector2(1.0 - squash_intensity * 0.5, 1.0 + squash_intensity * 0.5),
+		initial_sprites_scale * Vector2(1.0 - squash_intensity * 0.5, 1.0 + squash_intensity * 0.5),
 		hop_duration * 0.2
 	).set_trans(Tween.TRANS_QUAD)
 	
 	hop_tween.chain().tween_property(
 		sprites,
 		"scale",
-		Vector2.ONE,
+		initial_sprites_scale,
 		hop_duration * 0.2
 	)
 	
@@ -146,20 +147,19 @@ func start_hopping_animation():
 	hop_tween.parallel().tween_property(
 		sprites,
 		"scale",
-		Vector2(1.0 + squash_intensity * 1.2, 1.0 - squash_intensity * 1.2),
+		initial_sprites_scale * Vector2(1.0 + squash_intensity * 1.2, 1.0 - squash_intensity * 1.2),
 		hop_duration * 0.1
 	).set_trans(Tween.TRANS_BOUNCE)
 	
 	hop_tween.chain().tween_property(
 		sprites,
 		"scale",
-		Vector2.ONE,
+		initial_sprites_scale,
 		hop_duration * 0.15
 	).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
 	# 5. Pause avant le prochain saut
 	hop_tween.chain().tween_interval(hop_interval)
-
 func start_floating_animation():
 	"""Animation de flottement doux pour les ennemis sur tapis volant"""
 	if hop_tween:
@@ -356,10 +356,12 @@ func hit_bounce_animation():
 	var bounce_tween = create_tween()
 	bounce_tween.set_parallel(true)
 	
+	var perso_initial_scale = perso_sprite.scale
+	
 	# Scale bounce
-	bounce_tween.tween_property(perso_sprite, "scale", Vector2(1.2, 0.8), 0.1)
-	bounce_tween.chain().tween_property(perso_sprite, "scale", Vector2(0.9, 1.1), 0.1)
-	bounce_tween.chain().tween_property(perso_sprite, "scale", Vector2.ONE, 0.1)
+	bounce_tween.tween_property(perso_sprite, "scale", perso_initial_scale * Vector2(1.2, 0.8), 0.1)
+	bounce_tween.chain().tween_property(perso_sprite, "scale", perso_initial_scale * Vector2(0.9, 1.1), 0.1)
+	bounce_tween.chain().tween_property(perso_sprite, "scale", perso_initial_scale, 0.1)
 
 func shake_animation():
 	"""Animation de secousse pour mauvais sort"""
@@ -380,7 +382,7 @@ func update_weakness_display():
 		child.queue_free()
 	
 	var remaining_weaknesses = weaknesses.slice(current_weakness_index)
-	
+	if character_type=="Roi":weakness_container.position.x-=40
 	for i in range(remaining_weaknesses.size()):
 		var weakness_type = remaining_weaknesses[i]
 		
@@ -390,7 +392,7 @@ func update_weakness_display():
 			texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 			texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			texture_rect.custom_minimum_size = Vector2(32, 32)
-
+			
 			weakness_container.add_child(texture_rect)
 
 func destroy():
@@ -412,8 +414,8 @@ func destroy():
 	tween.tween_property(sceptre_sprite, "modulate:a", 0.0, 0.3)
 	
 	# Rotation finale dramatique
-	tween.tween_property(self, "rotation_degrees", 360, 0.5).set_ease(Tween.EASE_IN)	
-	tween.tween_property(self, "scale", Vector2.ZERO, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(sprites, "rotation_degrees", 360, 0.5).set_ease(Tween.EASE_IN)	
+	tween.tween_property(sprites, "scale", Vector2.ZERO, 0.3).set_ease(Tween.EASE_IN)
 	
 	await tween.finished
 	destroyed.emit(self)

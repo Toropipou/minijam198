@@ -28,7 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://c7qyrsolpxdqo" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Trefle.png" id="24_koem0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
-size = Vector2(40, 40)
+size = Vector2(40, 62)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x6fyo"]
 animations = [{
@@ -249,24 +249,12 @@ animations = [{
 
 [node name="Enemy" type="Area2D"]
 texture_filter = 1
-scale = Vector2(2, 2)
 collision_mask = 2
 script = ExtResource("1_ho1e7")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(20, 20)
+position = Vector2(20, 9)
 shape = SubResource("RectangleShape2D_ho1e7")
-
-[node name="WeaknessLabel" type="Label" parent="."]
-offset_top = 40.0
-offset_right = 40.0
-offset_bottom = 69.0
-theme_override_font_sizes/font_size = 24
-horizontal_alignment = 1
 
 [node name="hit_particle" type="CPUParticles2D" parent="."]
 position = Vector2(20, 20)
@@ -286,11 +274,12 @@ scale_amount_max = 4.0
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -21.0
-offset_top = 45.5
-offset_right = 67.0
-offset_bottom = 85.5
+offset_left = -66.0
+offset_top = 114.0
+offset_right = 22.0
+offset_bottom = 154.0
 grow_horizontal = 2
+scale = Vector2(2, 2)
 alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="WeaknessContainer"]
@@ -300,9 +289,17 @@ texture = ExtResource("2_lin2w")
 expand_mode = 3
 stretch_mode = 5
 
+[node name="TextureRect2" type="TextureRect" parent="WeaknessContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("2_lin2w")
+expand_mode = 3
+stretch_mode = 5
+
 [node name="sprites" type="Node2D" parent="."]
-visible = false
 texture_filter = 4
+position = Vector2(4, -67)
+scale = Vector2(0.15, 0.15)
 
 [node name="Sceptre" type="AnimatedSprite2D" parent="sprites"]
 texture_filter = 4

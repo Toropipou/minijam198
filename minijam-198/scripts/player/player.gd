@@ -28,7 +28,7 @@ enum TargetLane { TOP, BOTTOM }
 var current_target_lane : TargetLane = TargetLane.BOTTOM
 
 # Positions des couloirs (pour les projectiles)
-const LANE_TOP_Y : float = 200.0
+const LANE_TOP_Y : float = 350.0
 const LANE_BOTTOM_Y : float = 722.0
 
 # Paramètres de l'indicateur rotatif (comme dans CarryBallChallenge)

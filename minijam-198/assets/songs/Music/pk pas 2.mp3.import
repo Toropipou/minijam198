@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://fi757k66dk5s"
+path="res://.godot/imported/pk pas 2.mp3-4c542e61ec1831cd9c8ffe37d5ea1ff4.mp3str"
+
+[deps]
+
+source_file="res://assets/songs/Music/pk pas 2.mp3"
+dest_files=["res://.godot/imported/pk pas 2.mp3-4c542e61ec1831cd9c8ffe37d5ea1ff4.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
