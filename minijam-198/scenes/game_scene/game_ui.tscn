@@ -53,7 +53,7 @@ script = ExtResource("11_ulq3g")
 [node name="Bg" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_vbgr5")]
 
 [node name="Player" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_ul61k")]
-position = Vector2(295, 826)
+position = Vector2(200, 826)
 scale = Vector2(2, 2)
 
 [node name="hud" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("8_bqcs8")]

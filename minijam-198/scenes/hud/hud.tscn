@@ -88,6 +88,7 @@ offset_right = 2058.3542
 offset_bottom = 1080.0
 
 [node name="Roue" type="Node2D" parent="."]
+visible = false
 texture_filter = 1
 position = Vector2(-88, 232)
 
@@ -121,3 +122,10 @@ texture_filter = 1
 position = Vector2(268, 415)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("9_go0ap")
+
+[node name="PVContainer" type="HBoxContainer" parent="."]
+offset_left = 24.0
+offset_top = 15.0
+offset_right = 64.0
+offset_bottom = 55.0
+scale = Vector2(1.8, 2)

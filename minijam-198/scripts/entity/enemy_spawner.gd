@@ -27,7 +27,7 @@ var current_spawn_delay : float = 2.0
 
 # Complexité des ennemis
 var min_weaknesses : int = 1
-var max_weaknesses : int = 3
+var max_weaknesses : int = 2
 var avg_weaknesses : float = 1.2
 
 # Spawn en vagues ou groupes
@@ -193,7 +193,7 @@ func calculate_enemy_weaknesses() -> int:
 
 func generate_smart_weaknesses(count: int) -> Array:
 	"""Génère des faiblesses avec des patterns intéressants"""
-	var available_types = ["fire", "water", "earth", "air"]
+	var available_types = ["Coeur", "Carreau", "Trefle", "Pique"]
 	var weaknesses = []
 	
 	# Pattern selon la difficulté
@@ -312,10 +312,10 @@ func spawn_enemy(weaknesses: Array, lane: SpawnLane):
 		SpawnLane.BOTTOM:
 			enemy.position = spawn_position_bottom
 	
+
+	get_parent().add_child(enemy)
 	enemy.set_weaknesses(weaknesses)
 	enemy.destroyed.connect(_on_enemy_destroyed)
-	
-	get_parent().add_child(enemy)
 	spawned_enemies.append(enemy)
 	enemy_spawned.emit(enemy)
 

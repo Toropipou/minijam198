@@ -17,10 +17,10 @@ var current_health: int = 3
 
 # Mapping des touches aux sorts
 const SPELL_KEYS = {
-	"spell_1": "fire",
-	"spell_2": "water",
-	"spell_3": "earth",
-	"spell_4": "air"
+	"spell_1": "Coeur",
+	"spell_2": "Carreau",
+	"spell_3": "Trefle",
+	"spell_4": "Pique"
 }
 
 # Système de ciblage de couloir

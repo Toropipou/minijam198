@@ -1,6 +1,7 @@
-[gd_scene load_steps=52 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=53 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
+[ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
 [ext_resource type="Texture2D" uid="uid://bcilbyhthfyh2" path="res://assets/CHARA_VISUELS/Reine/Reine_Carreau.png" id="2_w7fs4"]
 [ext_resource type="Texture2D" uid="uid://iua5iasxk18q" path="res://assets/CHARA_VISUELS/Reine/Reine_Coeur.png" id="3_fyh0p"]
 [ext_resource type="Texture2D" uid="uid://dxhtvrnhaytiy" path="res://assets/CHARA_VISUELS/Reine/Reine_Pique.png" id="4_d0u07"]
@@ -27,6 +28,65 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
 size = Vector2(40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_doq3p"]
+atlas = ExtResource("21_wtgks")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ejd0a"]
+atlas = ExtResource("22_8ku25")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5u5q"]
+atlas = ExtResource("23_c3nn8")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nfmt4"]
+atlas = ExtResource("24_koem0")
+region = Rect2(0, 0, 71, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x6fyo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_doq3p")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Carreau",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ejd0a")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Coeur",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5u5q")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Pique",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nfmt4")
+}],
+"loop": true,
+"name": &"Roi_Sceptre_Trefle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"Roi_sans_sceptre",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ml7kf"]
 atlas = ExtResource("2_w7fs4")
@@ -275,71 +335,14 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_doq3p"]
-atlas = ExtResource("21_wtgks")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ejd0a"]
-atlas = ExtResource("22_8ku25")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y5u5q"]
-atlas = ExtResource("23_c3nn8")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nfmt4"]
-atlas = ExtResource("24_koem0")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_x6fyo"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_doq3p")
-}],
-"loop": true,
-"name": &"Roi_Sceptre_Carreau",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ejd0a")
-}],
-"loop": true,
-"name": &"Roi_Sceptre_Coeur",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y5u5q")
-}],
-"loop": true,
-"name": &"Roi_Sceptre_Pique",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nfmt4")
-}],
-"loop": true,
-"name": &"Roi_Sceptre_Trefle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": null
-}],
-"loop": true,
-"name": &"Roi_sans_spectre",
-"speed": 5.0
-}]
-
 [node name="Enemy" type="Area2D"]
 texture_filter = 1
+scale = Vector2(2, 2)
 collision_mask = 2
 script = ExtResource("1_ho1e7")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -369,24 +372,36 @@ scale_amount_min = 2.0
 scale_amount_max = 4.0
 
 [node name="WeaknessContainer" type="HBoxContainer" parent="."]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = 40.0
-offset_right = 88.0
-offset_bottom = 80.0
-grow_vertical = 2
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -21.0
+offset_top = 45.5
+offset_right = 67.0
+offset_bottom = 85.5
+grow_horizontal = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="WeaknessContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("2_lin2w")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Sceptre" type="AnimatedSprite2D" parent="."]
+position = Vector2(36, -10)
+sprite_frames = SubResource("SpriteFrames_x6fyo")
+animation = &"Roi_sans_sceptre"
 
 [node name="Perso" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+position = Vector2(37.5, -10)
 sprite_frames = SubResource("SpriteFrames_ffrjq")
-animation = &"Valet_Trefle"
+animation = &"Reine_Coeur"
 
 [node name="Couronne" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+position = Vector2(37.5, -10)
 sprite_frames = SubResource("SpriteFrames_7w1fe")
 animation = &"Sans_Couronne"
-
-[node name="Sceptre" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_x6fyo")
-animation = &"Roi_sans_spectre"

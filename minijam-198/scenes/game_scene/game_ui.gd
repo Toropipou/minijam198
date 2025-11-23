@@ -220,7 +220,7 @@ func _process(delta: float) -> void:
 	parallax.scroll_offset.x -= speed * 2 * delta
 	
 	# Déplacer les ennemis
-	var screen_left = -100
+	var screen_left = +250
 	for enemy in active_enemies:
 		if is_instance_valid(enemy):
 			enemy.position.x -= speed / 2 * delta
