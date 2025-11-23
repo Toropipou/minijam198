@@ -45,8 +45,9 @@ script = ExtResource("1_48c2t")
 
 [node name="ScoreLabel" type="Label" parent="."]
 texture_filter = 1
-offset_right = 40.0
-offset_bottom = 29.0
+offset_left = 1734.0
+offset_right = 1920.0
+offset_bottom = 84.0
 
 [node name="SpeedLabel" type="Label" parent="."]
 texture_filter = 1
@@ -54,12 +55,19 @@ offset_top = 64.0
 offset_right = 40.0
 offset_bottom = 93.0
 
-[node name="PVLabel" type="Label" parent="."]
+[node name="difflabel" type="Label" parent="."]
 texture_filter = 1
-offset_left = -1.0
-offset_top = 106.0
-offset_right = 39.0
-offset_bottom = 135.0
+offset_left = 394.0
+offset_top = 277.0
+offset_right = 434.0
+offset_bottom = 306.0
+
+[node name="perflabel" type="Label" parent="."]
+texture_filter = 1
+offset_left = 396.0
+offset_top = 329.0
+offset_right = 436.0
+offset_bottom = 358.0
 
 [node name="StartLabel" type="Label" parent="."]
 texture_filter = 1

@@ -3,7 +3,6 @@ extends CanvasLayer
 @onready var score_label = $ScoreLabel
 @onready var start_label = $StartLabel
 @onready var mana_bar = $ManaBar
-@onready var pv_label = $PVLabel
 @onready var impactframe = $impactframe
 @onready var roue = $Roue
 @onready var pv_container = $PVContainer
@@ -101,16 +100,7 @@ func show_input_pressed(spell_type: String) -> void:
 	tween.parallel().tween_property(sprite, "modulate", NORMAL_COLOR, PRESSED_DURATION)
 
 func _on_player_health_changed(current_health: int, max_health: int):
-	pv_label.text = "PV: " + str(current_health) + "/" + str(max_health)
-	
-	# Optionnel : changer la couleur si les PV sont bas
-	if current_health <= max_health * 0.25:
-		pv_label.add_theme_color_override("font_color", Color.RED)
-	elif current_health <= max_health * 0.5:
-		pv_label.add_theme_color_override("font_color", Color.ORANGE)
-	else:
-		pv_label.add_theme_color_override("font_color", Color.WHITE)
-	
+		
 	# Gérer l'animation des cartes
 	if current_health < current_displayed_health:
 		# Le joueur a perdu des PV - faire disparaître des cartes
@@ -178,6 +168,12 @@ func update_mana(current: float, max_value: float):
 
 func show_speed(speed):
 	$SpeedLabel.text = str(speed)
+
+func show_diff(diff):
+	$difflabel.text = str(diff)
+
+func show_perf(perf):
+	$perflabel.text = str(perf)
 
 func going_fast(is_it) -> void:
 	if is_it:

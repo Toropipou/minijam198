@@ -29,7 +29,7 @@ var current_target_lane : TargetLane = TargetLane.BOTTOM
 
 # Positions des couloirs (pour les projectiles)
 const LANE_TOP_Y : float = 200.0
-const LANE_BOTTOM_Y : float = 826.0
+const LANE_BOTTOM_Y : float = 722.0
 
 # Paramètres de l'indicateur rotatif (comme dans CarryBallChallenge)
 const INDICATOR_DISTANCE : float = 130.0  # Distance de la flèche par rapport au centre du joueur

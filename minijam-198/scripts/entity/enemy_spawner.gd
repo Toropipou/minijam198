@@ -1,4 +1,4 @@
-# EnemySpawner.gd - Version dynamique et adaptative
+# EnemySpawner.gd - Version équilibrée avec progression douce
 extends Node2D
 
 signal enemy_spawned(enemy)
@@ -15,44 +15,46 @@ signal wave_completed(wave_number)
 enum SpawnLane { TOP, BOTTOM, BOTH }
 var available_lanes : Array = [SpawnLane.TOP, SpawnLane.BOTTOM]
 
-# Difficulté dynamique
-var difficulty_level : float = 1.0
-var performance_rating : float = 1.0  # Vient du GameManager
+# Difficulté dynamique (maintenant contrôlée par progression temporelle)
+var difficulty_level : float = 0.0  # 0.0 → 1.0 basé sur le temps
+var performance_rating : float = 1.0
 var game_speed : float = 200.0
+var difficulty_progression : float = 0.0  # Reçu du GameManager
 
-# Paramètres de spawn adaptatifs
-var min_spawn_delay : float = 1.5
-var max_spawn_delay : float = 5.0
+# NOUVEAU : Paramètres de délai de spawn - PLUS RAPIDES au début
+const BASE_SPAWN_DELAY_AT_MIN_SPEED : float = 2.0  # À vitesse 200 (avant: 3.0)
+const BASE_SPAWN_DELAY_AT_MAX_SPEED : float = 0.8  # À vitesse 800+ (avant: 1.2)
 var current_spawn_delay : float = 2.0
 
-# Complexité des ennemis
-var min_weaknesses : int = 1
-var max_weaknesses : int = 2
-var avg_weaknesses : float = 1.2
+# NOUVEAU : Distribution des faiblesses avec DEUX paliers distincts
+# TOUJOURS au moins 20-30% de 1-weakness pour la cadence !
+#
+# Palier 1 (progression 0.0 - 1.0 / 0-30s):
+#   Début : 80% 1w, 20% 2w
+#   Fin : 40% 1w, 45% 2w, 15% 3w
+#
+# Palier 2 (progression 1.0 - 2.0 / 30-60s):
+#   Début : 30% 1w, 50% 2w, 20% 3w
+#   Fin : 20% 1w, 40% 2w, 30% 3w, 10% 4w
 
-# Spawn en vagues ou groupes
+# Spawn en vagues
 var enemies_per_wave : int = 1
 var enemies_spawned_in_wave : int = 0
 var time_between_waves : float = 5.0
 
-# Distribution des couloirs dans la vague actuelle
-var current_wave_lanes : Array = []  # Stocke quel couloir pour chaque ennemi de la vague
+# Distribution des couloirs
+var current_wave_lanes : Array = []
 
 # État
 var is_spawning : bool = false
 var spawned_enemies : Array = []
 var total_enemies_spawned : int = 0
 
-# Patterns intelligents
-var spawn_patterns : Array = [
-	"single",      # Un ennemi à la fois
-	"burst",       # Plusieurs ennemis rapidement
-	"increasing",  # Difficulté croissante
-	"mixed"        # Mélange aléatoire
-]
+# Patterns
+var spawn_patterns : Array = ["single", "burst", "increasing", "mixed"]
 var current_pattern : String = "single"
 var pattern_timer : float = 0.0
-const PATTERN_CHANGE_INTERVAL : float = 30.0  # Change de pattern toutes les 30s
+const PATTERN_CHANGE_INTERVAL : float = 30.0
 
 func _ready() -> void:
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
@@ -64,7 +66,6 @@ func _process(delta: float) -> void:
 	if not is_spawning:
 		return
 	
-	# Changer de pattern périodiquement
 	pattern_timer += delta
 	if pattern_timer >= PATTERN_CHANGE_INTERVAL:
 		pattern_timer = 0.0
@@ -72,7 +73,7 @@ func _process(delta: float) -> void:
 
 func start_spawning():
 	is_spawning = true
-	difficulty_level = 1.0
+	difficulty_level = 0.0
 	total_enemies_spawned = 0
 	current_pattern = "single"
 	
@@ -82,140 +83,140 @@ func stop_spawning():
 	is_spawning = false
 	spawn_timer.stop()
 
-func update_difficulty(perf_rating: float, speed: float):
-	"""Appelé par le GameManager pour mettre à jour les paramètres"""
+func update_difficulty(perf_rating: float, speed: float, progression: float):
+	"""Appelé toutes les 0.5s par le GameManager"""
 	performance_rating = perf_rating
 	game_speed = speed
+	difficulty_progression = progression
 	
-	# Ajuster la difficulté selon les performances
-	# Si le joueur performe bien (rating > 1.2), augmenter la difficulté
-	# Si le joueur galère (rating < 0.8), réduire la difficulté
-	
-	var old_difficulty = difficulty_level
-	
-	if performance_rating > 1.3:
-		difficulty_level = min(difficulty_level + 0.01, 3.0)
-	elif performance_rating < 0.7:
-		difficulty_level = max(difficulty_level - 0.02, 0.5)
-	
-	# Si la difficulté a augmenté significativement, augmenter légèrement la vitesse du jeu
-	if difficulty_level > old_difficulty + 0.5:
-		request_speed_increase()
-	
-	# Ajuster selon la vitesse du jeu
-	var speed_factor = (speed - 150.0) / (500.0 - 150.0)  # Normaliser entre 0 et 1
+	# La difficulté suit maintenant la progression temporelle
+	difficulty_level = progression
 	
 	# Calculer les paramètres de spawn
-	calculate_spawn_parameters(speed_factor)
+	calculate_spawn_parameters()
 
-func request_speed_increase():
-	"""Demande au GameManager d'augmenter légèrement la vitesse globale"""
-	var game_manager = get_tree().get_first_node_in_group("GM")
-	if game_manager and game_manager.has_method("increase_speed_from_difficulty"):
-		game_manager.increase_speed_from_difficulty(5.0)  # Boost de +5
-
-func calculate_spawn_parameters(speed_factor: float):
-	"""Calcule les paramètres de spawn en fonction de la difficulté"""
+func calculate_spawn_parameters():
+	"""Calcule les paramètres de spawn basés sur vitesse + progression"""
 	
-	# Délai entre spawns (plus rapide = moins de délai)
-	var base_delay = lerp(max_spawn_delay, min_spawn_delay, difficulty_level / 3.0)
-	current_spawn_delay = base_delay * (1.0 - speed_factor * 0.3)
-	current_spawn_delay = clamp(current_spawn_delay, min_spawn_delay, max_spawn_delay)
+	# 1. DÉLAI DE SPAWN : Inversement proportionnel à la vitesse
+	var speed_normalized = clamp((game_speed - 200.0) / (800.0 - 200.0), 0.0, 1.0)
+	current_spawn_delay = lerp(BASE_SPAWN_DELAY_AT_MIN_SPEED, BASE_SPAWN_DELAY_AT_MAX_SPEED, speed_normalized)
 	
-	# Nombre moyen de faiblesses
-	avg_weaknesses = 1.0 + (difficulty_level * 0.8)
-	avg_weaknesses = clamp(avg_weaknesses, 1.0, 4.0)
+	# Ajustement léger selon la progression
+	current_spawn_delay *= (1.0 - difficulty_progression * 0.2)  # -20% max
+	current_spawn_delay = clamp(current_spawn_delay, 0.8, 4.0)
 	
-	# Nombre d'ennemis par vague selon le pattern
+	# 2. NOMBRE D'ENNEMIS PAR VAGUE - Plus agressif
 	match current_pattern:
 		"single":
 			enemies_per_wave = 1
 		"burst":
-			enemies_per_wave = int(2 + difficulty_level)
+			# Palier 1: 1-3 ennemis, Palier 2: 2-5 ennemis
+			if difficulty_progression < 1.0:
+				enemies_per_wave = int(1 + difficulty_progression * 2)
+			else:
+				enemies_per_wave = int(2 + (difficulty_progression - 1.0) * 3)
 		"increasing":
-			enemies_per_wave = int(1 + (total_enemies_spawned / 10.0))
+			enemies_per_wave = int(1 + (total_enemies_spawned / 12.0))
 		"mixed":
-			enemies_per_wave = randi_range(1, int(2 + difficulty_level))
+			if difficulty_progression < 1.0:
+				enemies_per_wave = randi_range(1, int(2 + difficulty_progression))
+			else:
+				enemies_per_wave = randi_range(1, int(3 + difficulty_progression))
 	
-	# Limiter à 6 ennemis max par vague
-	enemies_per_wave = min(enemies_per_wave, 6)
+	enemies_per_wave = clamp(enemies_per_wave, 1, 6)
 	
-	# Préparer la distribution des couloirs pour cette vague
+	# 3. TEMPS ENTRE VAGUES - Plus rapide globalement
+	time_between_waves = lerp(4.0, 2.0, difficulty_progression / 2.0)
+	
 	prepare_wave_lanes()
 
 func spawn_next_enemy():
 	if not is_spawning:
 		return
 	
-	# Déterminer le nombre de faiblesses pour cet ennemi
-	var num_weaknesses = calculate_enemy_weaknesses()
-	
-	# Créer les faiblesses
+	# NOUVEAU : Système de distribution progressive
+	var num_weaknesses = calculate_progressive_weaknesses()
 	var weaknesses = generate_smart_weaknesses(num_weaknesses)
-	
-	# Déterminer le couloir pour cet ennemi
 	var lane = get_lane_for_current_enemy()
 	
-	# Spawn l'ennemi
 	spawn_enemy(weaknesses, lane)
 	
-	# Gestion des vagues
 	enemies_spawned_in_wave += 1
 	total_enemies_spawned += 1
 	
-	# Vérifier si on doit continuer la vague ou faire une pause
 	if enemies_spawned_in_wave >= enemies_per_wave:
-		# Fin de vague, pause plus longue
 		enemies_spawned_in_wave = 0
-		spawn_timer.wait_time = time_between_waves / (1.0 + difficulty_level * 0.2)
+		spawn_timer.wait_time = time_between_waves
 	else:
-		# Spawn suivant dans la vague
 		spawn_timer.wait_time = current_spawn_delay
 	
 	spawn_timer.start()
 
-func calculate_enemy_weaknesses() -> int:
-	"""Détermine intelligemment le nombre de faiblesses"""
+func calculate_progressive_weaknesses() -> int:
+	"""Distribution progressive avec DEUX PALIERS + toujours des 1-weakness"""
 	
-	# Distribution pondérée basée sur avg_weaknesses
-	var base = floor(avg_weaknesses)
-	var chance = avg_weaknesses - base
+	var rand = randf()
 	
-	var num = int(base)
-	if randf() < chance:
-		num += 1
+	# ===== PALIER 1 : Montée vers difficulté moyenne (progression 0.0 - 1.0) =====
+	if difficulty_progression < 1.0:
+		# Interpolation linéaire entre début et fin du palier 1
+		var p = difficulty_progression  # 0.0 → 1.0
+		
+		# Début (p=0) : 80% 1w, 20% 2w
+		# Fin (p=1) : 40% 1w, 45% 2w, 15% 3w
+		var chance_1w = lerp(0.80, 0.40, p)
+		var chance_2w = lerp(0.20, 0.45, p)
+		var chance_3w = lerp(0.0, 0.15, p)
+		
+		if rand < chance_1w:
+			return 1
+		elif rand < chance_1w + chance_2w:
+			return 2
+		else:
+			return 3
 	
-	# Variation aléatoire ±1 pour plus de variété
-	if randf() < 0.3:
-		num += [-1, 1][randi() % 2]
-	
-	return clamp(num, min_weaknesses, max_weaknesses)
+	# ===== PALIER 2 : Difficulté maximale (progression 1.0 - 2.0) =====
+	else:
+		var p = difficulty_progression - 1.0  # 0.0 → 1.0 dans le deuxième palier
+		
+		# Début (p=0) : 30% 1w, 50% 2w, 20% 3w
+		# Fin (p=1) : 20% 1w, 40% 2w, 30% 3w, 10% 4w
+		var chance_1w = lerp(0.30, 0.20, p)
+		var chance_2w = lerp(0.50, 0.40, p)
+		var chance_3w = lerp(0.20, 0.30, p)
+		var chance_4w = lerp(0.0, 0.10, p)
+		
+		if rand < chance_1w:
+			return 1
+		elif rand < chance_1w + chance_2w:
+			return 2
+		elif rand < chance_1w + chance_2w + chance_3w:
+			return 3
+		else:
+			return 4
 
 func generate_smart_weaknesses(count: int) -> Array:
 	"""Génère des faiblesses avec des patterns intéressants"""
 	var available_types = ["Coeur", "Carreau", "Trefle", "Pique"]
 	var weaknesses = []
 	
-	# Pattern selon la difficulté
 	if count == 1:
-		# Simple : un seul élément aléatoire
 		weaknesses.append(available_types[randi() % 4])
 		
 	elif count == 2:
-		# Moyen : deux éléments différents ou répétés
 		if randf() < 0.7:
 			# Deux différents
 			available_types.shuffle()
 			weaknesses.append(available_types[0])
 			weaknesses.append(available_types[1])
 		else:
-			# Deux identiques (plus difficile)
+			# Deux identiques
 			var type = available_types[randi() % 4]
 			weaknesses.append(type)
 			weaknesses.append(type)
 			
 	elif count == 3:
-		# Difficile : patterns variés
 		var pattern_type = randi() % 3
 		match pattern_type:
 			0:  # A-B-A
@@ -230,7 +231,6 @@ func generate_smart_weaknesses(count: int) -> Array:
 				weaknesses = [available_types[0], available_types[1], available_types[2]]
 				
 	else:  # 4 faiblesses
-		# Très difficile : patterns complexes
 		var pattern_type = randi() % 4
 		match pattern_type:
 			0:  # Tous différents
@@ -239,80 +239,71 @@ func generate_smart_weaknesses(count: int) -> Array:
 			1:  # A-A-B-B
 				available_types.shuffle()
 				weaknesses = [available_types[0], available_types[0], available_types[1], available_types[1]]
-			2:  # A-B-C-A (cycle)
+			2:  # A-B-C-A
 				available_types.shuffle()
 				weaknesses = [available_types[0], available_types[1], available_types[2], available_types[0]]
-			3:  # A-A-A-B (spam)
+			3:  # A-A-A-B
 				available_types.shuffle()
 				weaknesses = [available_types[0], available_types[0], available_types[0], available_types[1]]
 	
 	return weaknesses
 
 func prepare_wave_lanes():
-	"""Prépare la distribution des couloirs pour la vague à venir"""
+	"""Prépare la distribution des couloirs pour la vague"""
 	current_wave_lanes.clear()
 	
-	# Stratégies selon le nombre d'ennemis
 	if enemies_per_wave == 1:
-		# Un seul ennemi : couloir aléatoire
 		current_wave_lanes.append(available_lanes[randi() % 2])
 		
 	elif enemies_per_wave == 2:
-		# Deux ennemis : plusieurs possibilités
 		var strategy = randi() % 3
 		match strategy:
-			0:  # Même couloir (plus difficile)
+			0:  # Même couloir
 				var lane = available_lanes[randi() % 2]
 				current_wave_lanes.append(lane)
 				current_wave_lanes.append(lane)
-			1:  # Couloirs différents
+			1:  # TOP puis BOTTOM
 				current_wave_lanes.append(SpawnLane.TOP)
 				current_wave_lanes.append(SpawnLane.BOTTOM)
-			2:  # Couloirs différents inversés
+			2:  # BOTTOM puis TOP
 				current_wave_lanes.append(SpawnLane.BOTTOM)
 				current_wave_lanes.append(SpawnLane.TOP)
 	
 	else:
-		# 3+ ennemis : distribution intelligente
 		var strategy = randi() % 4
 		match strategy:
-			0:  # Alternance TOP-BOTTOM-TOP-BOTTOM
+			0:  # Alternance TOP-BOTTOM
 				for i in range(enemies_per_wave):
 					current_wave_lanes.append(SpawnLane.TOP if i % 2 == 0 else SpawnLane.BOTTOM)
-			
-			1:  # Alternance BOTTOM-TOP-BOTTOM-TOP
+			1:  # Alternance BOTTOM-TOP
 				for i in range(enemies_per_wave):
 					current_wave_lanes.append(SpawnLane.BOTTOM if i % 2 == 0 else SpawnLane.TOP)
-			
-			2:  # Groupes par couloir (ex: TOP-TOP-BOTTOM-BOTTOM)
+			2:  # Groupes
 				var half = enemies_per_wave / 2
 				for i in range(enemies_per_wave):
 					current_wave_lanes.append(SpawnLane.TOP if i < half else SpawnLane.BOTTOM)
-			
-			3:  # Complètement aléatoire (chaos)
+			3:  # Aléatoire
 				for i in range(enemies_per_wave):
 					current_wave_lanes.append(available_lanes[randi() % 2])
 
 func get_lane_for_current_enemy() -> SpawnLane:
-	"""Retourne le couloir pour l'ennemi actuel dans la vague"""
 	var index = enemies_spawned_in_wave
 	if index < current_wave_lanes.size():
 		return current_wave_lanes[index]
 	else:
-		# Fallback si jamais on dépasse (ne devrait pas arriver)
 		return available_lanes[randi() % 2]
 
 func spawn_enemy(weaknesses: Array, lane: SpawnLane):
 	var enemy = enemy_scene.instantiate()
 	
-	# Définir la position selon le couloir
 	match lane:
 		SpawnLane.TOP:
 			enemy.position = spawn_position_top
+			enemy.top_or_bottom = "top"
 		SpawnLane.BOTTOM:
 			enemy.position = spawn_position_bottom
+			enemy.top_or_bottom = "bottom"
 	
-
 	get_parent().add_child(enemy)
 	enemy.set_weaknesses(weaknesses)
 	enemy.destroyed.connect(_on_enemy_destroyed)
@@ -320,14 +311,9 @@ func spawn_enemy(weaknesses: Array, lane: SpawnLane):
 	enemy_spawned.emit(enemy)
 
 func select_next_pattern():
-	"""Change intelligemment de pattern"""
 	var old_pattern = current_pattern
-	
-	# Choisir un nouveau pattern différent
 	var available = spawn_patterns.filter(func(p): return p != old_pattern)
 	current_pattern = available[randi() % available.size()]
-	
-	#print("Pattern changé : ", old_pattern, " -> ", current_pattern)
 
 func _on_spawn_timer_timeout():
 	spawn_next_enemy()
@@ -335,7 +321,6 @@ func _on_spawn_timer_timeout():
 func _on_enemy_destroyed(enemy):
 	spawned_enemies.erase(enemy)
 
-# Fonctions utilitaires
 func clear_all_enemies():
 	for enemy in spawned_enemies:
 		if is_instance_valid(enemy):
@@ -352,4 +337,4 @@ func set_endless_mode():
 	current_pattern = "increasing"
 
 func skip_to_wave(wave_index: int):
-	difficulty_level = wave_index
+	difficulty_level = float(wave_index) / 10.0  # Convertir en progression 0-1

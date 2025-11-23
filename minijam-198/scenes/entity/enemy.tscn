@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=55 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
 [ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://cr2da1p4co7nx" path="res://assets/CHARA_VISUELS/Reine/Reine_Couronne_Trefle.png" id="16_33xuu"]
 [ext_resource type="Texture2D" uid="uid://dcvi4y6n4661y" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Carreau.png" id="17_fv7dh"]
 [ext_resource type="Texture2D" uid="uid://b4yb1b7c43hdq" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Coeur.png" id="18_f2bt2"]
+[ext_resource type="Texture2D" uid="uid://c4mqg7hbpk3b3" path="res://assets/CHARA_VISUELS/Valet/Valet_Trefle.png" id="18_v8xkk"]
 [ext_resource type="Texture2D" uid="uid://cl18206o3avdu" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Pique.png" id="19_dt0sv"]
 [ext_resource type="Texture2D" uid="uid://bvwwx2t78wafk" path="res://assets/CHARA_VISUELS/Roi/Roi_Couronne_Trefle.png" id="20_veaxh"]
 [ext_resource type="Texture2D" uid="uid://ca2u4rtmjhby" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Carreau.png" id="21_wtgks"]
@@ -132,6 +133,10 @@ region = Rect2(0, 0, 71, 100)
 atlas = ExtResource("12_ofb5c")
 region = Rect2(0, 0, 71, 100)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3nn8"]
+atlas = ExtResource("18_v8xkk")
+region = Rect2(0, 0, 71, 100)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_ffrjq"]
 animations = [{
 "frames": [{
@@ -222,7 +227,10 @@ animations = [{
 "name": &"Valet_Pique",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c3nn8")
+}],
 "loop": true,
 "name": &"Valet_Trefle",
 "speed": 5.0
@@ -389,19 +397,21 @@ texture = ExtResource("2_lin2w")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Sceptre" type="AnimatedSprite2D" parent="."]
-position = Vector2(36, -10)
+[node name="sprites" type="Node2D" parent="."]
+
+[node name="Sceptre" type="AnimatedSprite2D" parent="sprites"]
+position = Vector2(34.5, -9.5)
 sprite_frames = SubResource("SpriteFrames_x6fyo")
 animation = &"Roi_sans_sceptre"
 
-[node name="Perso" type="AnimatedSprite2D" parent="."]
+[node name="Perso" type="AnimatedSprite2D" parent="sprites"]
 texture_filter = 1
-position = Vector2(37.5, -10)
+position = Vector2(37.5, -9.5)
 sprite_frames = SubResource("SpriteFrames_ffrjq")
-animation = &"Reine_Coeur"
+animation = &"Valet_Trefle"
 
-[node name="Couronne" type="AnimatedSprite2D" parent="."]
+[node name="Couronne" type="AnimatedSprite2D" parent="sprites"]
 texture_filter = 1
-position = Vector2(37.5, -10)
+position = Vector2(37.5, -9.5)
 sprite_frames = SubResource("SpriteFrames_7w1fe")
 animation = &"Sans_Couronne"
