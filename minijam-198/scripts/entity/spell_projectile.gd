@@ -1,19 +1,19 @@
 # SpellProjectile.gd
 extends Area2D
 
-var spell_type : String = "fire"
+var spell_type : String = "Coeur"
 var speed : float = 800.0
 var target_y : float = 300.0  # Position Y du couloir ciblé
 
-@onready var visual = $ColorRect
+@onready var visual = $AnimatedSprite2D
 @onready var particles = $particles
 
 # Couleurs selon le type de sort
 const SPELL_COLORS = {
-	"fire": Color(1.0, 0.3, 0.1),
-	"water": Color(0.1, 0.5, 1.0),
-	"earth": Color(0.2, 0.8, 0.2),
-	"air": Color(0.912, 0.862, 0.0, 1.0)
+	"Coeur": Color("ff3bd0"),
+	"Carreau": Color("41d4ee"),
+	"Trefle": Color("7dff3e"),
+	"Pique": Color("b540ff"),
 }
 
 # Système de trajectoire
@@ -29,8 +29,10 @@ const CURVE_DISTANCE : float = 30.0  # Distance sur laquelle la courbe se produi
 
 func _ready() -> void:
 	# Appliquer la couleur selon le type de sort
+
+	if visual.sprite_frames.has_animation(spell_type):
+		visual.play(spell_type)
 	if SPELL_COLORS.has(spell_type):
-		visual.color = SPELL_COLORS[spell_type]
 		particles.color = SPELL_COLORS[spell_type]
 	
 	# Sauvegarder la position de départ
@@ -46,7 +48,7 @@ func _process(delta: float) -> void:
 	# Avancer horizontalement
 	position.x += speed * delta
 	travel_distance += speed * delta
-	
+	visual.rotation += 6.0 * delta   # 6 rad/s ≈ 343°/s
 	if use_curved_trajectory:
 		# Trajectoire en arc parabolique
 		_update_curved_trajectory()

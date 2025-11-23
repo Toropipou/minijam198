@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://bwatf7m1elbrd"]
+
+[ext_resource type="Shader" uid="uid://b4ipdku1k428a" path="res://assets/shader/card.gdshader" id="1_5gytk"]
+[ext_resource type="Texture2D" uid="uid://qymxpce5vbug" path="res://assets/UI/cards/coeur.png" id="2_054v2"]
+
+[sub_resource type="Gradient" id="Gradient_5gytk"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_054v2"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tiiih"]
+noise = SubResource("FastNoiseLite_054v2")
+color_ramp = SubResource("Gradient_5gytk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tiiih"]
+shader = ExtResource("1_5gytk")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_tiiih")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.12999999709424
+shader_parameter/burn_color = Color(0.7058824, 0.050980393, 0, 1)
+
+[node name="pvcard" type="TextureRect"]
+material = SubResource("ShaderMaterial_tiiih")
+custom_minimum_size = Vector2(64, 64)
+texture = ExtResource("2_054v2")
+expand_mode = 3
+stretch_mode = 5

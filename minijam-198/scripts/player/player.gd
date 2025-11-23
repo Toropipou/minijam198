@@ -17,10 +17,10 @@ var current_health: int = 3
 
 # Mapping des touches aux sorts
 const SPELL_KEYS = {
-	"spell_1": "fire",
-	"spell_2": "water",
-	"spell_3": "earth",
-	"spell_4": "air"
+	"spell_1": "Coeur",
+	"spell_2": "Carreau",
+	"spell_3": "Trefle",
+	"spell_4": "Pique"
 }
 
 # Système de ciblage de couloir
@@ -29,7 +29,7 @@ var current_target_lane : TargetLane = TargetLane.BOTTOM
 
 # Positions des couloirs (pour les projectiles)
 const LANE_TOP_Y : float = 200.0
-const LANE_BOTTOM_Y : float = 547.0
+const LANE_BOTTOM_Y : float = 722.0
 
 # Paramètres de l'indicateur rotatif (comme dans CarryBallChallenge)
 const INDICATOR_DISTANCE : float = 130.0  # Distance de la flèche par rapport au centre du joueur

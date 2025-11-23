@@ -1,8 +1,12 @@
-[gd_scene load_steps=14 format=3 uid="uid://bkbtnoddb08ea"]
+[gd_scene load_steps=18 format=3 uid="uid://bkbtnoddb08ea"]
 
 [ext_resource type="Script" uid="uid://cym1uuhydiwq6" path="res://qte_ui.gd" id="1_oahjx"]
 [ext_resource type="Texture2D" uid="uid://cf5mwpkkrgogc" path="res://assets/UI/Keyboard Letters and Symbols.png" id="2_1fsp5"]
 [ext_resource type="Texture2D" uid="uid://bc5lgxikjphdr" path="res://assets/UI/gdb-xbox-2.png" id="3_yak2t"]
+[ext_resource type="Texture2D" uid="uid://dg8ifi3qkc7d6" path="res://assets/UI/bouton/b_button.png" id="4_gactx"]
+[ext_resource type="Texture2D" uid="uid://mqwn3g51wpcr" path="res://assets/UI/bouton/x_button.png" id="5_edh1y"]
+[ext_resource type="Texture2D" uid="uid://c0ppiitd1a4e0" path="res://assets/UI/bouton/a_button.png" id="6_f546g"]
+[ext_resource type="Texture2D" uid="uid://dpj0utr3ci4w0" path="res://assets/UI/bouton/y_button.png" id="7_c1e2c"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yak2t"]
 atlas = ExtResource("2_1fsp5")
@@ -64,16 +68,17 @@ texture_controller_Y = SubResource("AtlasTexture_edh1y")
 texture_controller_X = SubResource("AtlasTexture_f546g")
 texture_controller_LT = SubResource("AtlasTexture_c1e2c")
 texture_controller_RT = SubResource("AtlasTexture_o0mu5")
-texture_spell_1 = SubResource("AtlasTexture_gactx")
-texture_spell_2 = SubResource("AtlasTexture_f546g")
-texture_spell_3 = SubResource("AtlasTexture_q6lo0")
-texture_spell_4 = SubResource("AtlasTexture_edh1y")
+texture_spell_1 = ExtResource("4_gactx")
+texture_spell_2 = ExtResource("5_edh1y")
+texture_spell_3 = ExtResource("6_f546g")
+texture_spell_4 = ExtResource("7_c1e2c")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 0
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 960.0
+offset_bottom = 540.0
 scale = Vector2(2, 2)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
 layout_mode = 2
+theme_override_constants/separation = 15

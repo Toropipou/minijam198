@@ -1,4 +1,4 @@
-## qte_ui.gd - Version adaptée pour spell_1, spell_2, spell_3, spell_4
+## qte_ui.gd - Version avec anti-spam
 extends Control
 
 signal qte_success
@@ -13,11 +13,17 @@ var max_time: float = 0.0
 var is_waiting: bool = false
 var button_nodes: Array[TextureRect] = []
 
+# Anti-spam
+var can_input: bool = true
+var penalty_duration: float = 0.2  # 200ms de pénalité
+var is_first_input: bool = true
+
 # Couleurs pour les états
 var color_waiting = Color.WHITE
 var color_success = Color.GREEN
 var color_failed = Color.RED
 var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
+var color_penalty = Color.ORANGE
 
 # Textures des boutons
 @export var texture_x: Texture2D
@@ -35,7 +41,7 @@ var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
 @export var texture_controller_LT: Texture2D
 @export var texture_controller_RT: Texture2D
 
-# Nouvelles textures pour les sorts (à assigner dans l'éditeur)
+# Nouvelles textures pour les sorts
 @export var texture_spell_1: Texture2D
 @export var texture_spell_2: Texture2D
 @export var texture_spell_3: Texture2D
@@ -55,6 +61,8 @@ func setup(buttons: Array, duration: float) -> void:
 	time_left = duration
 	current_index = 0
 	is_waiting = true
+	can_input = true
+	is_first_input = true
 	
 	# Nettoyer les anciens boutons
 	_clear_buttons()
@@ -129,11 +137,20 @@ func _input(event: InputEvent) -> void:
 	if not is_waiting or current_index >= button_sequence.size():
 		return
 	
+	# Vérifier si on peut accepter des inputs (anti-spam)
+	if not can_input and not is_first_input:
+		return
+	
 	var target = button_sequence[current_index]
 	var pressed = _check_input(event, target)
 	
 	if pressed:
+		is_first_input = false
 		_on_button_pressed()
+	elif _check_any_input(event):
+		# Mauvais input détecté -> pénalité
+		is_first_input = false
+		_apply_penalty()
 
 func _check_input(event: InputEvent, button: String) -> bool:
 	"""Vérifie si l'input correspond au bouton attendu"""
@@ -155,6 +172,42 @@ func _check_input(event: InputEvent, button: String) -> bool:
 		_:
 			# Touches clavier génériques (x, a, b, e, f, etc.)
 			return event is InputEventKey and event.pressed and event.keycode == OS.find_keycode_from_string(button.to_upper())
+
+func _check_any_input(event: InputEvent) -> bool:
+	"""Vérifie si un input QTE quelconque a été détecté"""
+	if event is InputEventKey and event.pressed:
+		return true
+	if event is InputEventMouseButton and event.pressed:
+		return true
+	# Vérifier les actions de sorts
+	for spell in ["spell_1", "spell_2", "spell_3", "spell_4"]:
+		if event.is_action_pressed(spell):
+			return true
+	return false
+
+func _apply_penalty() -> void:
+	"""Applique une pénalité pour mauvais input"""
+	can_input = false
+	
+	# Effet visuel de pénalité sur le bouton actuel
+	if current_index < button_nodes.size():
+		var btn = button_nodes[current_index]
+		var original_color = btn.modulate
+		
+		# Flash orange
+		var tween = create_tween()
+		tween.tween_property(btn, "modulate", color_penalty, 0.1)
+		tween.tween_property(btn, "modulate", original_color, 0.1)
+		
+		# Shake
+		var shake_tween = create_tween()
+		shake_tween.tween_property(btn, "position:x", btn.position.x + 10, 0.05)
+		shake_tween.tween_property(btn, "position:x", btn.position.x - 10, 0.05)
+		shake_tween.tween_property(btn, "position:x", btn.position.x, 0.05)
+	
+	# Timer pour réactiver les inputs
+	await get_tree().create_timer(penalty_duration).timeout
+	can_input = true
 
 func _on_button_pressed() -> void:
 	"""Gère l'appui sur le bon bouton"""
