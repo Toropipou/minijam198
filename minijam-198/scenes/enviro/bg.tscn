@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://w1aki58mg53y" path="res://assets/background/bg/5P_fenetre.png" id="3_46jl5"]
 [ext_resource type="Texture2D" uid="uid://b0dtlv23pbde1" path="res://assets/background/bg/4P.png" id="3_ymy4y"]
 [ext_resource type="Texture2D" uid="uid://vrrbnu01oodl" path="res://assets/background/bg/3P.png" id="4_ymy4y"]
-[ext_resource type="Texture2D" uid="uid://cyxmp5sy6fc8f" path="res://assets/background/bg/2P.png" id="5_u3ol0"]
-[ext_resource type="Texture2D" uid="uid://f1h2qtwjdyl4" path="res://assets/background/bg/2P_bis.png" id="6_ymy4y"]
+[ext_resource type="Texture2D" uid="uid://cs22rpd55gews" path="res://assets/background/bg/Enviro/2P_Gauche.png" id="5_ymy4y"]
+[ext_resource type="Texture2D" uid="uid://dxfiwrhvthhab" path="res://assets/background/bg/Enviro/2P_Droite.png" id="6_46jl5"]
 
 [node name="Bg" type="ParallaxBackground"]
 
@@ -56,7 +56,7 @@ motion_mirroring = Vector2(15360, 0)
 [node name="Sprite2D" type="Sprite2D" parent="2P"]
 position = Vector2(0, 2)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("5_u3ol0")
+texture = ExtResource("5_ymy4y")
 centered = false
 
 [node name="2Pb" type="ParallaxLayer" parent="."]
@@ -67,5 +67,5 @@ motion_mirroring = Vector2(5760, 0)
 [node name="Sprite2D" type="Sprite2D" parent="2Pb"]
 position = Vector2(0, 2)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("6_ymy4y")
+texture = ExtResource("6_46jl5")
 centered = false

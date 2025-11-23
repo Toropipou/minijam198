@@ -58,7 +58,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"run",
-"speed": 10.0
+"speed": 35.0
 }]
 
 [node name="Player" type="CharacterBody2D"]
@@ -66,7 +66,7 @@ texture_filter = 4
 script = ExtResource("1_8afob")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(20, 20)
+position = Vector2(-45, 20)
 shape = SubResource("RectangleShape2D_dovo2")
 
 [node name="CooldownSpell" type="Timer" parent="."]
@@ -116,3 +116,4 @@ scale = Vector2(0.07, 0.07)
 sprite_frames = SubResource("SpriteFrames_ioxgp")
 animation = &"run"
 autoplay = "run"
+frame_progress = 0.7596072

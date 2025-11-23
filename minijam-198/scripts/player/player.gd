@@ -85,11 +85,8 @@ func _process(_delta: float) -> void:
 			var success = game_manager.cast_spell(spell_type, current_target_lane)
 			
 			if success:
-				print("Sort lancé : ", spell_type, " vers couloir ", "HAUT" if current_target_lane == TargetLane.TOP else "BAS")
 				if game_manager.current_mana <= 0:
 					game_manager.qte_mandatory = true
-			else:
-				print("Impossible de lancer le sort (mana ou cooldown)")
 			
 			break
 
@@ -98,6 +95,10 @@ func play_animation_attack():
 	await get_tree().create_timer(0.5).timeout
 	sprite.play("run")
 	pass
+
+func play_run_speed(speed):
+	var animation_fps = remap(speed, 50, 1500, 10, 35)
+	sprite.speed_scale = animation_fps / sprite.sprite_frames.get_animation_speed("run")
 
 func update_arrow_direction():
 	"""Met à jour la direction de la flèche pour pointer vers le couloir ciblé"""
@@ -124,7 +125,6 @@ func take_damage(amount: int) -> void:
 	current_health = clamp(current_health - amount, 0, max_health)
 	health_changed.emit(current_health, max_health)
 	
-	print("💔 Dégâts reçus : ", amount, " | PV restants : ", current_health, "/", max_health)
 	
 	if current_health <= 0:
 		die()
@@ -139,7 +139,6 @@ func heal(amount: int) -> void:
 	
 	if actual_heal > 0:
 		health_changed.emit(current_health, max_health)
-		print("💚 Soins reçus : ", actual_heal, " | PV actuels : ", current_health, "/", max_health)
 	else:
 		print("⚕️ PV déjà au maximum")
 

@@ -208,6 +208,88 @@ func _generate_random_qte_combination() -> void:
 func _on_player_health_changed(current_health: int, max_health: int):
 	if hud.has_method("_on_player_health_changed"):
 		hud._on_player_health_changed(current_health, max_health)
+	
+	# NOUVEAU : Détecter la perte de vie
+	if current_health < player.max_health:
+		_trigger_damage_effects()
+
+# NOUVELLE FONCTION : Effets visuels lors des dégâts
+func _trigger_damage_effects() -> void:
+	# 1. Freeze court pour l'impact
+	Engine.time_scale = 0.0
+	await get_tree().create_timer(0.08, true, false, true).timeout
+	Engine.time_scale = 1.0
+	
+	# 2. Flash rouge de l'écran
+	_flash_screen(Color(1, 0, 0, 0.8), 0.6)
+	
+	# 3. Shake de caméra
+	_camera_shake(15.0, 0.4)
+	
+	# 4. Vignette rouge
+	if hud.has_method("show_damage_vignette"):
+		hud.show_damage_vignette()
+	
+	# 5. Effet de particules de sang/impact
+	_spawn_damage_particles()
+
+# NOUVELLE FONCTION : Shake de caméra
+func _camera_shake(intensity: float, duration: float) -> void:
+	var camera = viewport.get_camera_2d()
+	if not camera:
+		return
+	
+	var original_offset = camera.offset
+	var shake_tween = create_tween()
+	
+	var shake_count = int(duration * 30)  # 30 shakes par seconde
+	for i in range(shake_count):
+		var shake_offset = Vector2(
+			randf_range(-intensity, intensity),
+			randf_range(-intensity, intensity)
+		)
+		shake_tween.tween_property(camera, "offset", original_offset + shake_offset, duration / shake_count)
+	
+	shake_tween.tween_property(camera, "offset", original_offset, 0.1)
+
+# NOUVELLE FONCTION : Particules de dégâts
+func _spawn_damage_particles() -> void:
+	var particles = CPUParticles2D.new()
+	viewport.add_child(particles)
+	
+	particles.global_position = player.global_position
+	particles.z_index = 10
+	
+	particles.emitting = true
+	particles.one_shot = true
+	particles.amount = 40
+	particles.lifetime = 0.8
+	particles.explosiveness = 1.0
+	
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	particles.emission_sphere_radius = 30.0
+	
+	particles.direction = Vector2(1, -0.5)  # Légèrement vers le haut
+	particles.spread = 60
+	particles.initial_velocity_min = 150
+	particles.initial_velocity_max = 300
+	particles.gravity = Vector2(0, 400)
+	
+	particles.scale_amount_min = 3.0
+	particles.scale_amount_max = 6.0
+	
+	# Gradient rouge sang
+	particles.color_ramp = _create_blood_gradient()
+	
+	await get_tree().create_timer(1.0).timeout
+	particles.queue_free()
+
+func _create_blood_gradient() -> Gradient:
+	var gradient = Gradient.new()
+	gradient.set_color(0, Color(1, 0, 0, 1))      # Rouge vif
+	gradient.set_color(0.5, Color(0.8, 0, 0, 0.8)) # Rouge foncé
+	gradient.set_color(1, Color(0.3, 0, 0, 0))     # Transparent
+	return gradient
 
 # NOUVELLE FONCTION : Calculer le gain de vitesse selon le palier
 func get_speed_gain_for_kill() -> float:
@@ -236,7 +318,7 @@ func _process(delta: float) -> void:
 		start_game()
 		return
 	Datagame.high_score = max(score,Datagame.high_score)
-	
+	player.play_run_speed(speed)
 	hud.show_diff(spawner.difficulty_level)
 	hud.show_perf(performance_rating)
 	hud.show_speed(speed)
@@ -827,6 +909,7 @@ func cast_spell(spell_type: String, lane) -> bool:
 		qte_mandatory = true
 		return false
 	player.play_animation_attack()
+
 	current_mana -= SPELL_MANA_COST
 	spell_cooldown_timer = MIN_SPELL_COOLDOWN
 	

@@ -31,7 +31,7 @@ const PRESSED_DURATION = 0.15
 var health_card_scene: PackedScene = preload("res://scenes/hud/pvcard.tscn")
 var health_cards: Array[TextureRect] = []
 var current_displayed_health: int = 0
-
+var damage_vignette: ColorRect
 func _ready():
 	# Connecter le signal du joueur
 	var player = get_tree().get_first_node_in_group("player")
@@ -41,7 +41,15 @@ func _ready():
 	
 	_create_tutorial_ui()
 	_setup_fancy_score()
-	
+	_create_damage_vignette()
+	# NOUVELLE FONCTION : Créer la vignette de dégâts
+func _create_damage_vignette():
+	damage_vignette = ColorRect.new()
+	damage_vignette.color = Color(1, 0, 0, 0)
+	damage_vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	damage_vignette.z_index = 150
+	add_child(damage_vignette)
 func _setup_fancy_score():
 	"""Configure le score fancy avec des effets"""
 	# Augmenter la taille de police
