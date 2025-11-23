@@ -1,8 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://bv1sr2c1i4ye7"]
+[gd_scene load_steps=21 format=3 uid="uid://bv1sr2c1i4ye7"]
 
 [ext_resource type="Script" uid="uid://dopso4ocmm37f" path="res://scripts/hud/hud.gd" id="1_48c2t"]
 [ext_resource type="Theme" uid="uid://2p6glpubmhup" path="res://resources/themes/lab.tres" id="2_cgeww"]
 [ext_resource type="Shader" uid="uid://6c54jm7giov1" path="res://assets/shader/QTE_UI.gdshader" id="3_c45xl"]
+[ext_resource type="Shader" uid="uid://bnwmisckic7uu" path="res://bar_cranté.gdshader" id="3_q6mn5"]
 [ext_resource type="Shader" uid="uid://ns7ovbtxmqef" path="res://assets/shader/test.gdshader" id="4_0bx4p"]
 [ext_resource type="Texture2D" uid="uid://ylr0h62llpd0" path="res://assets/UI/coeur.png" id="5_n56i7"]
 [ext_resource type="Shader" uid="uid://cy8fjr5l03njc" path="res://assets/shader/test2.gdshader" id="5_nhd55"]
@@ -10,6 +11,68 @@
 [ext_resource type="Texture2D" uid="uid://dho4kmmuu6oa5" path="res://assets/UI/trefle.png" id="7_go0ap"]
 [ext_resource type="Texture2D" uid="uid://kt6obl55qlbm" path="res://assets/UI/carreau.png" id="8_mq0y1"]
 [ext_resource type="Texture2D" uid="uid://bo4owerx1wixp" path="res://assets/UI/base.png" id="9_go0ap"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8nkf1"]
+shader = ExtResource("3_q6mn5")
+shader_parameter/bar_mode = 0
+shader_parameter/fill_mode = 0
+shader_parameter/segment_count = 10
+shader_parameter/discrete_fill_amount = 10
+shader_parameter/fade_fill_amount = 1.0
+shader_parameter/pour_fill_amount = 1.0
+shader_parameter/animation_speed = 1.0
+shader_parameter/flash_type = 1
+shader_parameter/flash_segment = 1
+shader_parameter/flash_intensity = 0.0
+shader_parameter/single_segment_previous_fill = 1.0
+shader_parameter/single_segment_current_fill = 1.0
+shader_parameter/single_segment_flash_intensity = 0.8
+shader_parameter/flash_from_segment = 0
+shader_parameter/flash_to_segment = 0
+shader_parameter/single_segment_fade_from = 1.0
+shader_parameter/single_segment_fade_to = 1.0
+shader_parameter/single_segment_fade_progress = 0.0
+shader_parameter/drain_previous_fill = 1.0
+shader_parameter/drain_current_fill = 1.0
+shader_parameter/drain_time_progress = 0.0
+shader_parameter/background_color = Color(0.2509804, 0.1254902, 0.03137255, 0)
+shader_parameter/filled_color = Color(0.28210875, 0.43987948, 1, 1)
+shader_parameter/border_color = Color(0, 0, 0, 1)
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/drain_flash_color = Color(1, 1, 1, 1)
+shader_parameter/custom_frame = false
+shader_parameter/frame_texture = ExtResource("5_n56i7")
+shader_parameter/frame_trim = 0.0
+shader_parameter/alpha_threshold = 0.610000028975
+shader_parameter/scan_steps = 15
+shader_parameter/edge_smoothness = 0.02
+shader_parameter/mask_expansion = 0.0
+shader_parameter/frame_edge_opacity = 0.9
+shader_parameter/fluid_base_color = Color(0.2, 0.6, 1, 1)
+shader_parameter/fluid_highlight_color = Color(0.8, 0.9, 1, 1)
+shader_parameter/fluid_shadow_color = Color(0.1, 0.3, 0.6, 1)
+shader_parameter/fluid_flow_speed = 3.05200014171012
+shader_parameter/fluid_turbulence = 1.0
+shader_parameter/fluid_noise_scale = 6.0
+shader_parameter/gas_mode = true
+shader_parameter/gas_intensity = 0.80000003474012
+shader_parameter/effect_mode = 1
+shader_parameter/effect_strength = 0.630000029925
+shader_parameter/effect_speed = 0.46300001873262
+shader_parameter/wave_thickness = 0.22000000975148
+shader_parameter/bubbles_aspect_ratio = 6.015
+shader_parameter/vertical_gradient = true
+shader_parameter/V_gradient_strength = 0.786000037335
+shader_parameter/horizontal_gradient = false
+shader_parameter/H_gradient_strength = 0.0
+shader_parameter/segment_gap = 0.0390000018525
+shader_parameter/universal_border_size = 0.12800000608
+shader_parameter/horizontal_border_size = 0.5
+shader_parameter/inner_border_thickness_multiplier = 0.5
+shader_parameter/outer_border_size = 0.5
+shader_parameter/slant_amount = -0.004999976487500002
+shader_parameter/scale = -0.007999952879999994
+shader_parameter/slant_clip_margin = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0bx4p"]
 shader = ExtResource("3_c45xl")
@@ -61,9 +124,11 @@ script = ExtResource("1_48c2t")
 
 [node name="ScoreLabel" type="Label" parent="."]
 texture_filter = 1
-offset_left = 1734.0
-offset_right = 1920.0
-offset_bottom = 84.0
+offset_left = 1239.0
+offset_top = 8.0
+offset_right = 1425.0
+offset_bottom = 92.0
+pivot_offset = Vector2(92, 41)
 
 [node name="SpeedLabel" type="Label" parent="."]
 visible = false
@@ -95,12 +160,20 @@ offset_right = 40.0
 offset_bottom = 29.0
 
 [node name="ManaBar" type="ProgressBar" parent="."]
+visible = false
 texture_filter = 1
 offset_left = 456.0
 offset_top = 1008.0
 offset_right = 1506.0
 offset_bottom = 1050.0
 theme = ExtResource("2_cgeww")
+
+[node name="ManaBarC" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_8nkf1")
+offset_left = 462.0
+offset_top = 944.0
+offset_right = 1498.0
+offset_bottom = 1042.0
 
 [node name="impactframe" type="ColorRect" parent="."]
 visible = false

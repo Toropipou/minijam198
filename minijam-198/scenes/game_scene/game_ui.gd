@@ -569,7 +569,7 @@ func _tutorial_step_1():
 	tutorial_step = 1
 	
 	# Message d'instruction
-	hud.show_tutorial_message("Un ennemi arrive ! Utilise le bon sort pour l'éliminer.")
+	hud.show_tutorial_message("An enemy is coming ! Use the right spell to damage him.")
 	
 	# Attendre un peu avant de spawn
 	await get_tree().create_timer(1.5 * TUTORIAL_TIME_SCALE, true, false, true).timeout
@@ -590,7 +590,7 @@ func _tutorial_step_2():
 	hud.update_mana(current_mana, MAX_MANA)
 	
 	# Message
-	hud.show_tutorial_message("Plus de mana ! Maintiens une gâchette (LT/RT) pour recharger.")
+	hud.show_tutorial_message("We are out of Mana ! Hold any trigger (LT/RT) or shift to reload.")
 	
 	# Highlight des gâchettes (vous pouvez ajouter un effet visuel)
 	hud.highlight_triggers()
@@ -600,7 +600,7 @@ func _tutorial_step_3():
 	tutorial_step = 3
 	await get_tree().create_timer(2.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
 	# Message
-	hud.show_tutorial_message("Les ennemis peuvent avoir plusieurs faiblesses !\nIls peuvent aussi apparaître sur le couloir du HAUT.")
+	hud.show_tutorial_message("Enemies can have many weaknesses !\nThey can also appear on the upper lane (press UP/DOWN to navigate)")
 	await get_tree().create_timer(3.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
 
 	
@@ -620,7 +620,7 @@ func _tutorial_step_4():
 	tutorial_step = 4
 	
 	# Message
-	hud.show_tutorial_message("Ton objectif : Survivre le plus longtemps possible !\nTon score augmente avec le temps et les kills.")
+	hud.show_tutorial_message("Your objective : Survive !\nScore goes up by kill and time ! Good luck.")
 	
 	# Highlight du score
 	hud.highlight_score()
