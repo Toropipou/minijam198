@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=31 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
 [ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
@@ -30,27 +30,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
 size = Vector2(40, 40)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_doq3p"]
-atlas = ExtResource("21_wtgks")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ejd0a"]
-atlas = ExtResource("22_8ku25")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y5u5q"]
-atlas = ExtResource("23_c3nn8")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nfmt4"]
-atlas = ExtResource("24_koem0")
-region = Rect2(0, 0, 71, 100)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_x6fyo"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_doq3p")
+"texture": ExtResource("21_wtgks")
 }],
 "loop": true,
 "name": &"Roi_Sceptre_Carreau",
@@ -58,7 +42,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ejd0a")
+"texture": ExtResource("22_8ku25")
 }],
 "loop": true,
 "name": &"Roi_Sceptre_Coeur",
@@ -66,7 +50,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_y5u5q")
+"texture": ExtResource("23_c3nn8")
 }],
 "loop": true,
 "name": &"Roi_Sceptre_Pique",
@@ -74,7 +58,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_nfmt4")
+"texture": ExtResource("24_koem0")
 }],
 "loop": true,
 "name": &"Roi_Sceptre_Trefle",
@@ -89,59 +73,11 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ml7kf"]
-atlas = ExtResource("2_w7fs4")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gt5ad"]
-atlas = ExtResource("3_fyh0p")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hwqft"]
-atlas = ExtResource("4_d0u07")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v8xkk"]
-atlas = ExtResource("5_6hoso")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_33xuu"]
-atlas = ExtResource("6_ap6p4")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fv7dh"]
-atlas = ExtResource("7_xutuw")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_f2bt2"]
-atlas = ExtResource("8_iy134")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dt0sv"]
-atlas = ExtResource("9_p2jcx")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_veaxh"]
-atlas = ExtResource("10_ryhgo")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wtgks"]
-atlas = ExtResource("11_qsqmi")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8ku25"]
-atlas = ExtResource("12_ofb5c")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c3nn8"]
-atlas = ExtResource("18_v8xkk")
-region = Rect2(0, 0, 71, 100)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_ffrjq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ml7kf")
+"texture": ExtResource("2_w7fs4")
 }],
 "loop": true,
 "name": &"Reine_Carreau",
@@ -149,7 +85,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gt5ad")
+"texture": ExtResource("3_fyh0p")
 }],
 "loop": true,
 "name": &"Reine_Coeur",
@@ -157,7 +93,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hwqft")
+"texture": ExtResource("4_d0u07")
 }],
 "loop": true,
 "name": &"Reine_Pique",
@@ -165,7 +101,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_v8xkk")
+"texture": ExtResource("5_6hoso")
 }],
 "loop": true,
 "name": &"Reine_Trefle",
@@ -173,7 +109,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_33xuu")
+"texture": ExtResource("6_ap6p4")
 }],
 "loop": true,
 "name": &"Roi_Carreau",
@@ -181,7 +117,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fv7dh")
+"texture": ExtResource("7_xutuw")
 }],
 "loop": true,
 "name": &"Roi_Coeur",
@@ -189,7 +125,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_f2bt2")
+"texture": ExtResource("8_iy134")
 }],
 "loop": true,
 "name": &"Roi_Pique",
@@ -197,7 +133,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dt0sv")
+"texture": ExtResource("9_p2jcx")
 }],
 "loop": true,
 "name": &"Roi_Trefle",
@@ -205,7 +141,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_veaxh")
+"texture": ExtResource("10_ryhgo")
 }],
 "loop": true,
 "name": &"Valet_Carreau",
@@ -213,7 +149,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wtgks")
+"texture": ExtResource("11_qsqmi")
 }],
 "loop": true,
 "name": &"Valet_Coeur",
@@ -221,7 +157,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8ku25")
+"texture": ExtResource("12_ofb5c")
 }],
 "loop": true,
 "name": &"Valet_Pique",
@@ -229,50 +165,18 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_c3nn8")
+"texture": ExtResource("18_v8xkk")
 }],
 "loop": true,
 "name": &"Valet_Trefle",
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kf1ip"]
-atlas = ExtResource("13_gt5ad")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oxd8c"]
-atlas = ExtResource("14_hwqft")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nvhnk"]
-atlas = ExtResource("15_v8xkk")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n7dhk"]
-atlas = ExtResource("16_33xuu")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_p4p1s"]
-atlas = ExtResource("17_fv7dh")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ubwru"]
-atlas = ExtResource("18_f2bt2")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oke61"]
-atlas = ExtResource("19_dt0sv")
-region = Rect2(0, 0, 71, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ktfrg"]
-atlas = ExtResource("20_veaxh")
-region = Rect2(0, 0, 71, 100)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_7w1fe"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_kf1ip")
+"texture": ExtResource("13_gt5ad")
 }],
 "loop": true,
 "name": &"Reine_Couronne_Carreau",
@@ -280,7 +184,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_oxd8c")
+"texture": ExtResource("14_hwqft")
 }],
 "loop": true,
 "name": &"Reine_Couronne_Coeur",
@@ -288,7 +192,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_nvhnk")
+"texture": ExtResource("15_v8xkk")
 }],
 "loop": true,
 "name": &"Reine_Couronne_Pique",
@@ -296,7 +200,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_n7dhk")
+"texture": ExtResource("16_33xuu")
 }],
 "loop": true,
 "name": &"Reine_Couronne_Trefle",
@@ -304,7 +208,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_p4p1s")
+"texture": ExtResource("17_fv7dh")
 }],
 "loop": true,
 "name": &"Roi_Couronne_Carreau",
@@ -312,7 +216,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ubwru")
+"texture": ExtResource("18_f2bt2")
 }],
 "loop": true,
 "name": &"Roi_Couronne_Coeur",
@@ -320,7 +224,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_oke61")
+"texture": ExtResource("19_dt0sv")
 }],
 "loop": true,
 "name": &"Roi_Couronne_Pique",
@@ -328,7 +232,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ktfrg")
+"texture": ExtResource("20_veaxh")
 }],
 "loop": true,
 "name": &"Roi_Couronne_Trefle",
@@ -350,7 +254,6 @@ collision_mask = 2
 script = ExtResource("1_ho1e7")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -398,20 +301,23 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="sprites" type="Node2D" parent="."]
+visible = false
+texture_filter = 4
 
 [node name="Sceptre" type="AnimatedSprite2D" parent="sprites"]
-position = Vector2(34.5, -9.5)
+texture_filter = 4
+position = Vector2(34.5, -4)
 sprite_frames = SubResource("SpriteFrames_x6fyo")
 animation = &"Roi_sans_sceptre"
 
 [node name="Perso" type="AnimatedSprite2D" parent="sprites"]
-texture_filter = 1
-position = Vector2(37.5, -9.5)
+texture_filter = 4
+position = Vector2(37.5, -4)
 sprite_frames = SubResource("SpriteFrames_ffrjq")
-animation = &"Valet_Trefle"
+animation = &"Reine_Pique"
 
 [node name="Couronne" type="AnimatedSprite2D" parent="sprites"]
-texture_filter = 1
-position = Vector2(37.5, -9.5)
+texture_filter = 4
+position = Vector2(37.5, -4)
 sprite_frames = SubResource("SpriteFrames_7w1fe")
-animation = &"Sans_Couronne"
+animation = &"Reine_Couronne_Trefle"
