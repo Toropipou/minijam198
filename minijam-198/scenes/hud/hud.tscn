@@ -1,10 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://bv1sr2c1i4ye7"]
+[gd_scene load_steps=19 format=3 uid="uid://bv1sr2c1i4ye7"]
 
 [ext_resource type="Script" uid="uid://dopso4ocmm37f" path="res://scripts/hud/hud.gd" id="1_48c2t"]
 [ext_resource type="Theme" uid="uid://2p6glpubmhup" path="res://resources/themes/lab.tres" id="2_cgeww"]
 [ext_resource type="Shader" uid="uid://6c54jm7giov1" path="res://assets/shader/QTE_UI.gdshader" id="3_c45xl"]
 [ext_resource type="Shader" uid="uid://ns7ovbtxmqef" path="res://assets/shader/test.gdshader" id="4_0bx4p"]
 [ext_resource type="Texture2D" uid="uid://ylr0h62llpd0" path="res://assets/UI/coeur.png" id="5_n56i7"]
+[ext_resource type="Shader" uid="uid://cy8fjr5l03njc" path="res://assets/shader/test2.gdshader" id="5_nhd55"]
 [ext_resource type="Texture2D" uid="uid://2iqg8uxoliqb" path="res://assets/UI/pic.png" id="6_mq0y1"]
 [ext_resource type="Texture2D" uid="uid://dho4kmmuu6oa5" path="res://assets/UI/trefle.png" id="7_go0ap"]
 [ext_resource type="Texture2D" uid="uid://kt6obl55qlbm" path="res://assets/UI/carreau.png" id="8_mq0y1"]
@@ -19,26 +20,41 @@ shader_parameter/fg_color = Color(1, 1, 1, 1)
 shader_parameter/invert = false
 shader_parameter/intensity = 1.0
 
-[sub_resource type="Gradient" id="Gradient_0bx4p"]
-
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_mgtrf"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_v7mo4"]
 width = 3070
 height = 6427
 noise = SubResource("FastNoiseLite_mgtrf")
-color_ramp = SubResource("Gradient_0bx4p")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mgtrf"]
 shader = ExtResource("4_0bx4p")
 shader_parameter/noise = SubResource("NoiseTexture2D_v7mo4")
-shader_parameter/line_color_a = Color(2, 2, 2, 1)
-shader_parameter/line_color_b = Color(1, 1, 0, 1)
-shader_parameter/back_color = Color(0.27058825, 0, 0, 0)
-shader_parameter/line_threshold = 0.85999998077728
+shader_parameter/line_color_a = Color(0.93071103, 2.0002677, 2.0002677, 1)
+shader_parameter/line_color_b = Color(0, 1, 0, 1)
+shader_parameter/back_color = Color(0.45882353, 0, 0, 0)
+shader_parameter/line_threshold = 0.86999998055376
 shader_parameter/speed = 0.01999999955296
 shader_parameter/line_length = 128.48
 shader_parameter/angle = 0.0
+
+[sub_resource type="Gradient" id="Gradient_q6mn5"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8nkf1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ascoc"]
+noise = SubResource("FastNoiseLite_8nkf1")
+color_ramp = SubResource("Gradient_q6mn5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_558d4"]
+shader = ExtResource("5_nhd55")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_ascoc")
+shader_parameter/bottom_color = Color(1, 0.69803923, 1, 1)
+shader_parameter/middle_color = Color(1, 0, 0, 1)
+shader_parameter/top_color = Color(1, 0.4627451, 0, 1)
+shader_parameter/fire_alpha = 0.670000031825
+shader_parameter/fire_speed = Vector2(0.96, 0.11)
+shader_parameter/fire_aperture = 1.226000058235
 
 [node name="hud" type="CanvasLayer"]
 script = ExtResource("1_48c2t")
@@ -50,12 +66,14 @@ offset_right = 1920.0
 offset_bottom = 84.0
 
 [node name="SpeedLabel" type="Label" parent="."]
+visible = false
 texture_filter = 1
 offset_top = 64.0
 offset_right = 40.0
 offset_bottom = 93.0
 
 [node name="difflabel" type="Label" parent="."]
+visible = false
 texture_filter = 1
 offset_left = 394.0
 offset_top = 277.0
@@ -63,6 +81,7 @@ offset_right = 434.0
 offset_bottom = 306.0
 
 [node name="perflabel" type="Label" parent="."]
+visible = false
 texture_filter = 1
 offset_left = 396.0
 offset_top = 329.0
@@ -70,6 +89,7 @@ offset_right = 436.0
 offset_bottom = 358.0
 
 [node name="StartLabel" type="Label" parent="."]
+visible = false
 texture_filter = 1
 offset_right = 40.0
 offset_bottom = 29.0
@@ -91,9 +111,17 @@ offset_bottom = 1102.0
 [node name="fastshader" type="ColorRect" parent="."]
 visible = false
 material = SubResource("ShaderMaterial_mgtrf")
-offset_top = -73.0
-offset_right = 2058.3542
-offset_bottom = 1080.0
+offset_left = -231.0
+offset_top = -171.0
+offset_right = 2314.7183
+offset_bottom = 1255.0
+
+[node name="speed2" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_558d4")
+offset_top = -483.0
+offset_right = 1921.0
+offset_bottom = 1438.0
 
 [node name="Roue" type="Node2D" parent="."]
 visible = false

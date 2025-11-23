@@ -27,6 +27,7 @@ func new_game() -> void:
 
 func intro_done() -> void:
 	animation_state_machine.travel("OpenMainMenu")
+	$score.text = "High Score : %s" % Datagame.high_score
 
 func _is_in_intro() -> bool:
 	return animation_state_machine.get_current_node() == "Intro"

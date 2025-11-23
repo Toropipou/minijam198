@@ -1,4 +1,6 @@
 extends CanvasLayer
+var tutorial_message_label: Label
+var highlighted_elements: Array = []
 
 @onready var score_label = $ScoreLabel
 @onready var start_label = $StartLabel
@@ -30,7 +32,115 @@ func _ready():
 		player.health_changed.connect(_on_player_health_changed)
 		# Initialiser les cartes avec les PV actuels
 		initialize_health_cards(player.current_health, player.max_health)
+	_create_tutorial_ui()
+	
+func _create_tutorial_ui():
+	"""Crée l'UI pour le tutoriel"""
+	tutorial_message_label = Label.new()
+	tutorial_message_label.add_theme_font_size_override("font_size", 48)
+	tutorial_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tutorial_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tutorial_message_label.set_anchors_preset(Control.PRESET_CENTER)
+	tutorial_message_label.offset_top = -600
+	tutorial_message_label.offset_bottom = -400
+	tutorial_message_label.offset_left = -1200
+	tutorial_message_label.offset_right = 500
+	tutorial_message_label.modulate = Color(1, 1, 0.5, 1)  # Jaune
+	tutorial_message_label.visible = false
+	tutorial_message_label.z_index = 200
+	add_child(tutorial_message_label)
 
+func show_tutorial_message(text: String):
+	"""Affiche un message de tutoriel"""
+	tutorial_message_label.text = text
+	tutorial_message_label.visible = true
+	# Animation d'apparition
+	tutorial_message_label.modulate.a = 0
+	var tween = create_tween()
+	tween.tween_property(tutorial_message_label, "modulate:a", 1.0, 0.3)
+
+func hide_tutorial_message():
+	"""Cache le message de tutoriel"""
+	var tween = create_tween()
+	tween.tween_property(tutorial_message_label, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(func(): tutorial_message_label.visible = false)
+
+func show_tutorial_error(text: String):
+	"""Affiche une erreur tutoriel en rouge"""
+	tutorial_message_label.text = text
+	tutorial_message_label.modulate = Color(1, 0.3, 0.3, 1)  # Rouge
+	tutorial_message_label.visible = true
+	
+	await get_tree().create_timer(2.0).timeout
+	tutorial_message_label.modulate = Color(1, 1, 0.5, 1)  # Retour jaune
+
+func highlight_spell_for_weakness(weakness: String):
+	"""Met en surbrillance le sort correspondant à une faiblesse"""
+	var spell_sprite: Sprite2D = null
+	
+	match weakness:
+		"Coeur":
+			spell_sprite = spell_1_sprite
+		"Carreau":
+			spell_sprite = spell_2_sprite
+		"Trefle":
+			spell_sprite = spell_3_sprite
+		"Pique":
+			spell_sprite = spell_4_sprite
+	
+	if not spell_sprite:
+		return
+	
+	_create_pulse_effect(spell_sprite)
+
+func highlight_triggers():
+	"""Met en surbrillance les gâchettes (vous pouvez ajouter des sprites)"""
+	show_tutorial_message("Hold any trigger button (LT,RT,LB,RB) or Shift to reload !")
+
+func highlight_score():
+	"""Met en surbrillance le score"""
+	_create_pulse_effect(score_label)
+
+func _create_pulse_effect(node: Node):
+	"""Crée un effet de pulsation sur un nœud"""
+	if node in highlighted_elements:
+		return  # Déjà en surbrillance
+	
+	highlighted_elements.append(node)
+	
+	# Créer une animation de pulsation infinie
+	var tween = create_tween()
+	tween.set_loops()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_SINE)
+	
+	var original_scale = node.scale
+	var original_modulate = node.modulate
+	
+	tween.tween_property(node, "scale", original_scale * 1.3, 0.6)
+	tween.parallel().tween_property(node, "modulate", Color(2, 2, 1, 1), 0.6)
+	tween.tween_property(node, "scale", original_scale, 0.6)
+	tween.parallel().tween_property(node, "modulate", original_modulate, 0.6)
+	
+	# Stocker le tween pour pouvoir l'arrêter plus tard
+	node.set_meta("tutorial_tween", tween)
+
+func clear_all_highlights():
+	"""Enlève tous les highlights"""
+	for node in highlighted_elements:
+		if is_instance_valid(node):
+			var tween = node.get_meta("tutorial_tween", null)
+			if tween:
+				tween.kill()
+			
+			# Réinitialiser les valeurs
+			var reset_tween = create_tween()
+			reset_tween.set_parallel(true)
+			reset_tween.tween_property(node, "scale", Vector2.ONE, 0.3)
+			reset_tween.tween_property(node, "modulate", Color.WHITE, 0.3)
+	
+	highlighted_elements.clear()
+	
 func initialize_health_cards(current_health: int, max_health: int):
 	"""Crée toutes les cartes de PV au démarrage"""
 	# Nettoyer les cartes existantes
@@ -169,17 +279,40 @@ func update_mana(current: float, max_value: float):
 func show_speed(speed):
 	$SpeedLabel.text = str(speed)
 
+
 func show_diff(diff):
 	$difflabel.text = str(diff)
 
 func show_perf(perf):
 	$perflabel.text = str(perf)
 
-func going_fast(is_it) -> void:
+func going_fast(is_it: bool, speed: float = 50.0) -> void:
 	if is_it:
 		$fastshader.visible = true
+
+		# Clamp pour rester dans la plage
+		# On force le type avec : float
+		var s: float = clamp(speed, 500.0, 1500.0)
+
+		# Ratio pour le lerp
+		var ratio: float = (s - 200.0) / (1500.0 - 200.0)
+
+		# Valeur interpolée
+		var shader_speed: float = lerp(0.02, 0.07, ratio)
+
+		# Envoi au shader
+		$fastshader.material.set_shader_parameter("speed", shader_speed)
+
 	else:
 		$fastshader.visible = false
+
+
+
+func going_fast2(is_it) -> void:
+	if is_it:
+		$speed2.visible = true
+	else:
+		$speed2.visible = false
 
 func show_roue():
 	if true: return

@@ -10,6 +10,7 @@ const FILE_PATH = "res://scripts/game_state.gd"
 @export var total_games_played : int
 @export var play_time : int
 @export var total_time : int
+@export var tuto_completed = false
 
 static func get_level_state(level_state_key : String) -> LevelState:
 	if not has_game_state(): 

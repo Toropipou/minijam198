@@ -1,26 +1,47 @@
-# GameManager.gd - Version équilibrée
+# GameManager.gd - Version équilibrée avec gain de vitesse progressif
 extends Node
 
 @onready var qte_manager: Node = $ViewportContainer/ConfigurableSubViewport/QTE_Manager
 var qte_mandatory := false
+
+# Tutorial
+var tutorial_active : bool = false
+var tutorial_step : int = 0
+var tutorial_enemy = null
+var tutorial_completed : bool = false
+const TUTORIAL_TIME_SCALE : float = 0.3
 
 # Variables de jeu
 var score : int = 0
 var combo : int = 0
 var game_running : bool = false
 
-# Système de vitesse dynamique
+# Système de vitesse dynamique avec PALIERS
 var speed : float = 200.0
 const MIN_SPEED : float = 50.0
 const MAX_SPEED : float = 1500.0
 const BASE_SPEED : float = 200.0
-const SPEED_INCREASE_ON_KILL : float = 100.0
-const SPEED_DECREASE_ON_MISS : float = 150.0  # Réduit pour reset progressif
-const SPEED_DECAY_RATE : float = 10.0
 
-# NOUVEAU : Système de reset de vitesse sur erreur
-const SPEED_MISS_PENALTY_FACTOR : float = 0.5  # On retombe à 50% de la vitesse actuelle
-const MIN_SPEED_AFTER_MISS : float = 180.0     # Ne descend pas en dessous de 180
+# NOUVEAU : Système de gain de vitesse par paliers
+const SPEED_TIER_1_THRESHOLD : float = 400.0   # Palier 1
+const SPEED_TIER_2_THRESHOLD : float = 700.0   # Palier 2
+const SPEED_TIER_3_THRESHOLD : float = 1000.0  # Palier 3
+
+# Gains de vitesse selon le palier atteint
+const SPEED_GAIN_TIER_0 : float = 25.0  # < 400 (début facile)
+const SPEED_GAIN_TIER_1 : float = 32.0  # 400-700 (accélération)
+const SPEED_GAIN_TIER_2 : float = 40.0  # 700-1000 (rapide)
+const SPEED_GAIN_TIER_3 : float = 50.0  # > 1000 (extrême)
+
+const SPEED_DECAY_RATE : float = 3.0  # Ralentissement naturel plus doux
+
+# NOUVEAU : Pénalités sur miss ajustées par palier
+const MISS_PENALTY_TIER_0 : float = 0.65  # On garde 65% (perte de 35%)
+const MISS_PENALTY_TIER_1 : float = 0.55  # On garde 55% (perte de 45%)
+const MISS_PENALTY_TIER_2 : float = 0.45  # On garde 45% (perte de 55%)
+const MISS_PENALTY_TIER_3 : float = 0.35  # On garde 35% (perte de 65% - brutal!)
+
+const MIN_SPEED_AFTER_MISS : float = 180.0
 
 # Métriques de performance
 var enemies_killed : int = 0
@@ -28,14 +49,13 @@ var enemies_missed : int = 0
 var kill_rate : float = 0.0
 var performance_rating : float = 1.0
 
-# NOUVEAU : Système de performance rating lissé
-var performance_history : Array = []  # Stocke les derniers succès/échecs
-const PERFORMANCE_HISTORY_SIZE : int = 20  # On regarde les 20 derniers ennemis
-const PERFORMANCE_INCREASE_RATE : float = 0.02  # Monte lentement
-const PERFORMANCE_DECREASE_RATE : float = 0.08  # Descend plus vite sur erreur
+var performance_history : Array = []
+const PERFORMANCE_HISTORY_SIZE : int = 20
+const PERFORMANCE_INCREASE_RATE : float = 0.02
+const PERFORMANCE_DECREASE_RATE : float = 0.08
 
 # Système de mana
-var current_mana : float = 100.0
+var current_mana : float = 10.0
 const MAX_MANA : float = 100.0
 const MANA_REGEN_RATE : float = 0.0
 const SPELL_MANA_COST : float = 10.0
@@ -53,23 +73,20 @@ const FOCUS_FADE_DURATION : float = 0.25
 var original_time_scale : float = 1.0
 var is_in_slow_motion : bool = false
 
-# Liste des ennemis actifs
 var active_enemies : Array = []
 
-# Cooldown minimal entre sorts
 const MIN_SPELL_COOLDOWN : float = 0.1
 var spell_cooldown_timer : float = 0.0
 
 const QTE_COOLDOWN : float = 2.0
 var qte_cooldown_timer : float = 0.0 
 
-# Timer pour calculer le kill rate et la progression
 var time_elapsed : float = 0.0
 
-# NOUVEAU : Système de progression temporelle à deux paliers
-var difficulty_progression : float = 0.0  # 0.0 → 2.0 (deux paliers)
-const TIME_TO_FIRST_PLATEAU : float = 30.0   # Premier palier à 30s (progression = 1.0)
-const TIME_TO_MAX_DIFFICULTY : float = 60.0  # Palier max à 60s (progression = 2.0)
+var difficulty_progression : float = 0.0
+const TIME_TO_FIRST_PLATEAU : float = 30.0
+const TIME_TO_SECOND_PLATEAU : float = 60.0
+const TIME_TO_MAX_DIFFICULTY : float = 90.0
 
 # Références
 @onready var viewport = $ViewportContainer/ConfigurableSubViewport
@@ -78,7 +95,6 @@ const TIME_TO_MAX_DIFFICULTY : float = 60.0  # Palier max à 60s (progression = 
 @onready var spawner = $ViewportContainer/ConfigurableSubViewport/EnemySpawner
 @onready var hud = $ViewportContainer/ConfigurableSubViewport/hud
 
-# Overlay pour l'effet de focus
 var focus_overlay: ColorRect
 var vignette_overlay: ColorRect 
 
@@ -96,7 +112,16 @@ func _ready() -> void:
 	
 	qte_manager.qte_scene = preload("res://scenes/game_scene/system/QTE_UI.tscn")
 	_create_focus_overlays()
+	
+	# Charger l'état du tutoriel
+	_load_tutorial_state()
+	
 	new_game()
+func _load_tutorial_state():
+	"""Charge si le tutoriel a déjà été complété"""
+	# Vous pouvez utiliser un fichier de config ou ConfigFile
+	# Pour l'instant, simple variable (réinitialise à chaque lancement)
+	tutorial_completed = false  # Changez en true pour tester sans tutoriel
 
 func _create_focus_overlays() -> void:
 	focus_overlay = ColorRect.new()
@@ -151,7 +176,6 @@ func new_game():
 	
 	_generate_random_qte_combination()
 	
-	# Reset métriques
 	enemies_killed = 0
 	enemies_missed = 0
 	kill_rate = 0.0
@@ -185,23 +209,50 @@ func _on_player_health_changed(current_health: int, max_health: int):
 	if hud.has_method("_on_player_health_changed"):
 		hud._on_player_health_changed(current_health, max_health)
 
+# NOUVELLE FONCTION : Calculer le gain de vitesse selon le palier
+func get_speed_gain_for_kill() -> float:
+	if speed < SPEED_TIER_1_THRESHOLD:
+		return SPEED_GAIN_TIER_0  # Début facile
+	elif speed < SPEED_TIER_2_THRESHOLD:
+		return SPEED_GAIN_TIER_1  # Accélération
+	elif speed < SPEED_TIER_3_THRESHOLD:
+		return SPEED_GAIN_TIER_2  # Rapide
+	else:
+		return SPEED_GAIN_TIER_3  # Extrême
+
+# NOUVELLE FONCTION : Calculer la pénalité sur miss selon le palier
+func get_miss_penalty_factor() -> float:
+	if speed < SPEED_TIER_1_THRESHOLD:
+		return MISS_PENALTY_TIER_0  # Pénalité douce
+	elif speed < SPEED_TIER_2_THRESHOLD:
+		return MISS_PENALTY_TIER_1  # Pénalité modérée
+	elif speed < SPEED_TIER_3_THRESHOLD:
+		return MISS_PENALTY_TIER_2  # Pénalité sévère
+	else:
+		return MISS_PENALTY_TIER_3  # Pénalité brutale
+
 func _process(delta: float) -> void:
 	if not game_running:
-		if Input.is_action_just_pressed("ui_accept"):
-			start_game()
+		start_game()
 		return
+	Datagame.high_score = max(score,Datagame.high_score)
 	
 	hud.show_diff(spawner.difficulty_level)
 	hud.show_perf(performance_rating)
 	hud.show_speed(speed)
-	if speed > 800:
-		hud.going_fast(true)
+	
+	# Indicateurs visuels de vitesse par paliers
+	if speed > SPEED_TIER_2_THRESHOLD:
+		hud.going_fast(true, speed)
 	else:
 		hud.going_fast(false)
 	
-	time_elapsed += delta
+	if speed > SPEED_TIER_3_THRESHOLD:
+		hud.going_fast2(true)
+	else:
+		hud.going_fast2(false)	
 	
-	# NOUVEAU : Calculer la progression de difficulté basée sur le temps
+	time_elapsed += delta
 	update_difficulty_progression(delta)
 	
 	if qte_cooldown_timer > 0:
@@ -220,20 +271,17 @@ func _process(delta: float) -> void:
 		spell_cooldown_timer -= delta
 	
 	update_dynamic_speed(delta)
-	parallax.scroll_offset.x -= speed * 2 * delta
+	parallax.scroll_offset.x -= speed * 2.5 * delta
 	
-	var screen_left = +100
+	var screen_left = -100
 	for enemy in active_enemies:
 		if is_instance_valid(enemy):
-			enemy.position.x -= speed / 2 * delta
-			
+			enemy.position.x -= speed / 1.5 * delta
 			if enemy.position.x < screen_left:
 				_on_enemy_escaped(enemy)
 	
-	# NOUVEAU : Calculer les métriques de performance de manière lissée
 	calculate_smooth_performance_metrics()
 	
-	# Mettre à jour le spawner moins souvent (toutes les 0.5s au lieu de chaque frame)
 	if int(time_elapsed * 2) != int((time_elapsed - delta) * 2):
 		spawner.update_difficulty(performance_rating, speed, difficulty_progression)
 	
@@ -244,37 +292,23 @@ func _process(delta: float) -> void:
 		hud.update_debug_info(speed, performance_rating, kill_rate)
 
 func update_difficulty_progression(delta: float):
-	"""Calcule la progression de difficulté avec DEUX paliers distincts (0.0 → 2.0)"""
-	
-	# Palier 1 : 0-30s → progression 0.0 à 1.0
-	# Palier 2 : 30-60s → progression 1.0 à 2.0
-	
 	if time_elapsed < TIME_TO_FIRST_PLATEAU:
-		# Premier palier (0-30s)
 		var progress = time_elapsed / TIME_TO_FIRST_PLATEAU
 		difficulty_progression = smoothstep(0.0, 1.0, progress)
 	else:
-		# Deuxième palier (30-60s)
 		var time_in_second_phase = time_elapsed - TIME_TO_FIRST_PLATEAU
 		var progress = time_in_second_phase / (TIME_TO_MAX_DIFFICULTY - TIME_TO_FIRST_PLATEAU)
 		difficulty_progression = 1.0 + smoothstep(0.0, 1.0, clamp(progress, 0.0, 1.0))
 	
-	# Influence de la performance (±15%)
-	var performance_influence = (performance_rating - 1.0) * 0.15
+	var performance_influence = (performance_rating - 1.0) * 0.01
 	difficulty_progression = clamp(difficulty_progression + performance_influence, 0.0, 2.0)
 
 func calculate_smooth_performance_metrics():
-	"""Calcule un rating de performance lissé sur les derniers ennemis"""
-	
-	# Calculer le ratio de succès sur l'historique
 	if performance_history.size() > 0:
 		var successes = performance_history.count(true)
 		var success_rate = float(successes) / float(performance_history.size())
-		
-		# Le rating cible est entre 0.5 et 1.5
 		var target_rating = 0.5 + success_rate
 		
-		# Interpoler lentement vers le target
 		if target_rating > performance_rating:
 			performance_rating += PERFORMANCE_INCREASE_RATE
 		else:
@@ -282,7 +316,6 @@ func calculate_smooth_performance_metrics():
 		
 		performance_rating = clamp(performance_rating, 0.3, 1.5)
 	
-	# Calculer le kill rate
 	if time_elapsed > 0:
 		kill_rate = (enemies_killed / time_elapsed) * 60.0
 
@@ -332,6 +365,14 @@ func _on_qte_started() -> void:
 	hud.hide_roue()
 
 func _on_qte_success() -> void:
+	
+	# Si on est dans le tutoriel étape 2
+	if tutorial_active and tutorial_step == 2:
+		await get_tree().create_timer(0.5 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+		hud.hide_tutorial_message()
+		hud.clear_all_highlights()
+		_tutorial_step_3()
+		
 	qte_mandatory = false
 	_trigger_impact_freeze()
 
@@ -479,6 +520,7 @@ func _create_particle_gradient() -> Gradient:
 #endregion
 
 func update_dynamic_speed(delta: float):
+	# Retour progressif vers BASE_SPEED quand pas d'action
 	if speed > BASE_SPEED:
 		speed = max(speed - SPEED_DECAY_RATE * delta, BASE_SPEED)
 	elif speed < BASE_SPEED:
@@ -494,9 +536,171 @@ func increase_speed_from_difficulty(amount: float):
 		hud.show_difficulty_increase()
 
 func start_game():
+	if not Datagame.tuto_completed and not tutorial_active:
+		_start_tutorial()
+	else:
+		_start_normal_game()
+
+func _start_normal_game():
 	game_running = true
 	spawner.start_spawning()
 	hud.hide_start_message()
+	Engine.time_scale = 1.0
+
+func _start_tutorial():
+	"""Démarre le tutoriel"""
+	tutorial_active = true
+	tutorial_step = 0
+	game_running = true
+	
+	# Ralentir le jeu
+	Engine.time_scale = TUTORIAL_TIME_SCALE
+	
+	# Désactiver le spawner normal
+	spawner.stop_spawning()
+	
+	hud.hide_start_message()
+	
+	# Lancer l'étape 1
+	_tutorial_step_1()
+
+func _tutorial_step_1():
+	"""Étape 1 : Spawn un ennemi 1-weakness sur le couloir BOTTOM"""
+	tutorial_step = 1
+	
+	# Message d'instruction
+	hud.show_tutorial_message("Un ennemi arrive ! Utilise le bon sort pour l'éliminer.")
+	
+	# Attendre un peu avant de spawn
+	await get_tree().create_timer(1.5 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+	
+	# Spawn ennemi avec 1 faiblesse aléatoire
+	var weakness_type = ["Coeur", "Carreau", "Trefle", "Pique"][randi() % 4]
+	tutorial_enemy = _spawn_tutorial_enemy([weakness_type], spawner.SpawnLane.BOTTOM)
+	tutorial_enemy.position.x = 1600
+	# Highlight du sort correspondant
+	hud.highlight_spell_for_weakness(weakness_type)
+
+func _tutorial_step_2():
+	"""Étape 2 : Mana à 0, apprendre le QTE"""
+	tutorial_step = 2
+	
+	# Vider la mana
+	current_mana = 0.0
+	hud.update_mana(current_mana, MAX_MANA)
+	
+	# Message
+	hud.show_tutorial_message("Plus de mana ! Maintiens une gâchette (LT/RT) pour recharger.")
+	
+	# Highlight des gâchettes (vous pouvez ajouter un effet visuel)
+	hud.highlight_triggers()
+
+func _tutorial_step_3():
+	"""Étape 3 : Ennemi 2-weaknesses sur couloir TOP"""
+	tutorial_step = 3
+	await get_tree().create_timer(2.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+	# Message
+	hud.show_tutorial_message("Les ennemis peuvent avoir plusieurs faiblesses !\nIls peuvent aussi apparaître sur le couloir du HAUT.")
+	await get_tree().create_timer(3.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+
+	
+	# Spawn ennemi avec 2 faiblesses sur TOP
+	var available = ["Coeur", "Carreau", "Trefle", "Pique"]
+	available.shuffle()
+	var weaknesses = [available[0], available[1]]
+	tutorial_enemy = _spawn_tutorial_enemy(weaknesses, spawner.SpawnLane.TOP)
+	
+	# Highlight des deux sorts
+	hud.highlight_spell_for_weakness(weaknesses[0])
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	hud.highlight_spell_for_weakness(weaknesses[1])
+
+func _tutorial_step_4():
+	"""Étape 4 : Mettre en lumière le score"""
+	tutorial_step = 4
+	
+	# Message
+	hud.show_tutorial_message("Ton objectif : Survivre le plus longtemps possible !\nTon score augmente avec le temps et les kills.")
+	
+	# Highlight du score
+	hud.highlight_score()
+	
+	await get_tree().create_timer(3.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+	
+	_end_tutorial()
+
+func _end_tutorial():
+	"""Termine le tutoriel et lance le jeu normal"""
+	tutorial_active = false
+	tutorial_completed = true
+	Datagame.tuto_completed = true
+	tutorial_step = 0
+	
+	# Retour à la vitesse normale progressivement
+	var tween = create_tween()
+	tween.tween_method(_set_time_scale, TUTORIAL_TIME_SCALE, 1.0, 0.5)
+	
+	await tween.finished
+	
+	# Message final
+	hud.show_tutorial_message("C'est parti !")
+	await get_tree().create_timer(1.0, true, false, true).timeout
+	hud.hide_tutorial_message()
+	
+	# Démarrer le jeu normal
+	spawner.start_spawning()
+	hud.clear_all_highlights()
+
+
+func _spawn_tutorial_enemy(weaknesses: Array, lane) -> Node:
+	"""Spawn un ennemi de tutoriel qui reste figé"""
+	var enemy = spawner.enemy_scene.instantiate()
+	active_enemies.append(enemy)
+	match lane:
+		spawner.SpawnLane.TOP:
+			enemy.position = spawner.spawn_position_top
+			enemy.top_or_bottom = "top"
+		spawner.SpawnLane.BOTTOM:
+			enemy.position = spawner.spawn_position_bottom
+			enemy.top_or_bottom = "bottom"
+	
+	viewport.add_child(enemy)
+	enemy.set_weaknesses(weaknesses)
+	
+	# Connecter les signaux
+	enemy.destroyed.connect(_on_tutorial_enemy_destroyed)
+	enemy.weakness_hit.connect(_on_tutorial_enemy_weakness_hit)
+	
+	# Figer l'ennemi (vitesse très lente)
+	enemy.set_physics_process(false)  # Désactiver son mouvement
+	
+	return enemy
+
+func _on_tutorial_enemy_destroyed(enemy):
+	"""Quand l'ennemi du tutoriel est détruit"""
+	if not tutorial_active:
+		return
+	
+	# Feedback visuel
+	_flash_screen(Color.GREEN, 0.3)
+	
+	# Passer à l'étape suivante selon l'étape actuelle
+	match tutorial_step:
+		1:
+			await get_tree().create_timer(0.5 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+			_tutorial_step_2()
+		3:
+			await get_tree().create_timer(0.5 * TUTORIAL_TIME_SCALE, true, false, true).timeout
+			_tutorial_step_4()
+
+func _on_tutorial_enemy_weakness_hit(enemy, remaining: int):
+	"""Feedback lors d'un hit sur l'ennemi tutoriel"""
+	if not tutorial_active:
+		return
+	
+	# Petit effet visuel
+	if hud.has_method("show_hit_feedback"):
+		hud.show_hit_feedback(enemy.position, true)
 
 func _on_enemy_spawned(enemy):
 	active_enemies.append(enemy)
@@ -507,11 +711,19 @@ func _on_enemy_spawned(enemy):
 func _on_enemy_destroyed(enemy):
 	active_enemies.erase(enemy)
 	
-	# BOOST DE VITESSE
-	speed += SPEED_INCREASE_ON_KILL
+	# BOOST DE VITESSE SELON LE PALIER ATTEINT
+	var speed_gain = get_speed_gain_for_kill()
+	speed += speed_gain
 	speed = min(speed, MAX_SPEED)
 	
-	# Ajouter un succès à l'historique
+	# Feedback visuel selon le palier
+	if speed >= SPEED_TIER_3_THRESHOLD:
+		if hud.has_method("show_speed_boost_extreme"):
+			hud.show_speed_boost_extreme()
+	elif speed >= SPEED_TIER_2_THRESHOLD:
+		if hud.has_method("show_speed_boost_high"):
+			hud.show_speed_boost_high()
+	
 	performance_history.append(true)
 	if performance_history.size() > PERFORMANCE_HISTORY_SIZE:
 		performance_history.pop_front()
@@ -534,11 +746,16 @@ func _on_enemy_escaped(enemy):
 	
 	active_enemies.erase(enemy)
 	
-	# GROSSE PÉNALITÉ : Retombe à 50% de la vitesse actuelle
-	var target_speed = max(speed * SPEED_MISS_PENALTY_FACTOR, MIN_SPEED_AFTER_MISS)
+	# PÉNALITÉ SELON LE PALIER : Plus on est rapide, plus on perd!
+	var penalty_factor = get_miss_penalty_factor()
+	var target_speed = max(speed * penalty_factor, MIN_SPEED_AFTER_MISS)
 	speed = target_speed
 	
-	# Ajouter un échec à l'historique
+	# Feedback visuel de la punition
+	if penalty_factor <= MISS_PENALTY_TIER_3:
+		if hud.has_method("show_speed_penalty_brutal"):
+			hud.show_speed_penalty_brutal()
+	
 	performance_history.append(false)
 	if performance_history.size() > PERFORMANCE_HISTORY_SIZE:
 		performance_history.pop_front()
@@ -550,13 +767,15 @@ func _on_enemy_escaped(enemy):
 		hud.update_combo(combo)
 	if hud.has_method("show_speed_penalty"):
 		hud.show_speed_penalty()
-	
-	player.take_damage(1)
+	if not enemy.is_dead:player.take_damage(1)
 	enemy.queue_free()
 
 func _on_enemy_weakness_hit(enemy, remaining: int):
 	score += 50
-	speed += 2.0
+	
+	# Petit boost aussi sur les hits intermédiaires
+	var mini_boost = get_speed_gain_for_kill() * 0.15
+	speed += mini_boost
 	speed = min(speed, MAX_SPEED)
 	
 	if hud.has_method("show_hit_feedback"):
@@ -564,7 +783,9 @@ func _on_enemy_weakness_hit(enemy, remaining: int):
 
 func _on_wrong_spell(enemy, spell_type: String):
 	combo = max(0, combo - 1)
-	speed -= 5.0
+	
+	# Petite pénalité sur mauvais sort
+	speed -= 8.0
 	speed = max(speed, MIN_SPEED)
 	
 	if hud.has_method("update_combo"):
@@ -581,6 +802,22 @@ func _on_wave_completed(wave_number: int):
 func cast_spell(spell_type: String, lane) -> bool:
 	if spell_cooldown_timer > 0 or qte_in_progress:
 		return false
+	# Pendant le tutoriel, vérifier si c'est le bon sort
+	if tutorial_active and tutorial_enemy and is_instance_valid(tutorial_enemy):
+		if tutorial_step == 1 or tutorial_step == 3:
+			var expected_weaknesses = tutorial_enemy.weaknesses
+			var spell_matches = false
+			# Vérifier si le sort correspond à une faiblesse attendue
+			for weakness in expected_weaknesses:
+				if weakness == spell_type:
+					spell_matches = true
+					break
+			
+			if not spell_matches:
+				# Mauvais sort pendant le tutoriel - afficher un feedback
+				hud.show_tutorial_error("Mauvais sort ! Essaie celui qui correspond à la couleur de l'ennemi.")
+				return false
+	
 	if current_mana <= 0:
 		qte_mandatory = true
 		return false
@@ -592,10 +829,21 @@ func cast_spell(spell_type: String, lane) -> bool:
 		hud.update_mana(current_mana, MAX_MANA)
 		
 	var closest_enemy = get_closest_enemy()
+	print(closest_enemy)
 	if closest_enemy:
 		player.play_cast_animation(spell_type, lane)
 	return true
-
+	
+func _spell_type_matches_weakness(spell_type: String, weakness: String) -> bool:
+	"""Vérifie si un type de sort correspond à une faiblesse"""
+	var mapping = {
+		"spell_1": "Coeur",
+		"spell_2": "Carreau",
+		"spell_3": "Trefle",
+		"spell_4": "Pique"
+	}
+	return mapping.get(spell_type, "") == weakness
+	
 func get_closest_enemy():
 	var closest = null
 	var min_distance = INF

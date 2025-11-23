@@ -21,21 +21,26 @@ var performance_rating : float = 1.0
 var game_speed : float = 200.0
 var difficulty_progression : float = 0.0  # Reçu du GameManager
 
-# NOUVEAU : Paramètres de délai de spawn - PLUS RAPIDES au début
-const BASE_SPAWN_DELAY_AT_MIN_SPEED : float = 2.0  # À vitesse 200 (avant: 3.0)
-const BASE_SPAWN_DELAY_AT_MAX_SPEED : float = 0.8  # À vitesse 800+ (avant: 1.2)
-var current_spawn_delay : float = 2.0
+# NOUVEAU : Paramètres de délai de spawn - TRÈS RAPIDES au début pour sensation de massacre
+const BASE_SPAWN_DELAY_AT_MIN_SPEED : float = 1.5  # À vitesse 200 (encore plus rapide!)
+const BASE_SPAWN_DELAY_AT_MAX_SPEED : float = 0.6  # À vitesse 800+ (ultra rapide)
+var current_spawn_delay : float = 1.5
 
-# NOUVEAU : Distribution des faiblesses avec DEUX paliers distincts
-# TOUJOURS au moins 20-30% de 1-weakness pour la cadence !
+# NOUVEAU : Distribution des faiblesses avec TROIS paliers distincts
+# CAP MAXIMUM : 3 FAIBLESSES (pas de 4-weakness)
+# TOUJOURS au moins 20% de 1-weakness pour la cadence !
 #
 # Palier 1 (progression 0.0 - 1.0 / 0-30s):
-#   Début : 80% 1w, 20% 2w
+#   Début : 85% 1w, 15% 2w
 #   Fin : 40% 1w, 45% 2w, 15% 3w
 #
 # Palier 2 (progression 1.0 - 2.0 / 30-60s):
 #   Début : 30% 1w, 50% 2w, 20% 3w
-#   Fin : 20% 1w, 40% 2w, 30% 3w, 10% 4w
+#   Fin : 25% 1w, 45% 2w, 30% 3w
+#
+# Palier 3 ENFER (progression 2.0 - 3.0 / 60-90s):
+#   Début : 20% 1w, 40% 2w, 40% 3w
+#   Fin : 15% 1w, 35% 2w, 50% 3w (MAXIMUM DE 3-WEAKNESS!)
 
 # Spawn en vagues
 var enemies_per_wave : int = 1
@@ -106,28 +111,46 @@ func calculate_spawn_parameters():
 	current_spawn_delay *= (1.0 - difficulty_progression * 0.2)  # -20% max
 	current_spawn_delay = clamp(current_spawn_delay, 0.8, 4.0)
 	
-	# 2. NOMBRE D'ENNEMIS PAR VAGUE - Plus agressif
+	# 2. NOMBRE D'ENNEMIS PAR VAGUE - Beaucoup plus au début!
 	match current_pattern:
 		"single":
-			enemies_per_wave = 1
-		"burst":
-			# Palier 1: 1-3 ennemis, Palier 2: 2-5 ennemis
-			if difficulty_progression < 1.0:
-				enemies_per_wave = int(1 + difficulty_progression * 2)
+			# Même en single, on augmente progressivement
+			if difficulty_progression < 0.5:
+				enemies_per_wave = 1
 			else:
-				enemies_per_wave = int(2 + (difficulty_progression - 1.0) * 3)
+				enemies_per_wave = randi_range(1, 2)
+		
+		"burst":
+			# Palier 1: 2-3 ennemis
+			# Palier 2: 3-5 ennemis
+			# Palier 3: 4-6 ennemis
+			if difficulty_progression < 1.0:
+				enemies_per_wave = int(2 + difficulty_progression)
+			elif difficulty_progression < 2.0:
+				enemies_per_wave = int(3 + (difficulty_progression - 1.0) * 2)
+			else:
+				enemies_per_wave = int(4 + (difficulty_progression - 2.0) * 2)
+		
 		"increasing":
-			enemies_per_wave = int(1 + (total_enemies_spawned / 12.0))
+			enemies_per_wave = int(2 + (total_enemies_spawned / 10.0))  # Plus agressif
+		
 		"mixed":
 			if difficulty_progression < 1.0:
-				enemies_per_wave = randi_range(1, int(2 + difficulty_progression))
+				enemies_per_wave = randi_range(1, int(2 + difficulty_progression * 2))
+			elif difficulty_progression < 2.0:
+				enemies_per_wave = randi_range(2, int(3 + difficulty_progression))
 			else:
-				enemies_per_wave = randi_range(1, int(3 + difficulty_progression))
+				enemies_per_wave = randi_range(2, int(4 + difficulty_progression))
 	
 	enemies_per_wave = clamp(enemies_per_wave, 1, 6)
 	
-	# 3. TEMPS ENTRE VAGUES - Plus rapide globalement
-	time_between_waves = lerp(4.0, 2.0, difficulty_progression / 2.0)
+	# 3. TEMPS ENTRE VAGUES - Plus rapide, surtout au début
+	if difficulty_progression < 1.0:
+		time_between_waves = lerp(3.0, 2.5, difficulty_progression)
+	elif difficulty_progression < 2.0:
+		time_between_waves = lerp(2.5, 2.0, difficulty_progression - 1.0)
+	else:
+		time_between_waves = lerp(2.0, 1.5, difficulty_progression - 2.0)
 	
 	prepare_wave_lanes()
 
@@ -154,20 +177,19 @@ func spawn_next_enemy():
 	spawn_timer.start()
 
 func calculate_progressive_weaknesses() -> int:
-	"""Distribution progressive avec DEUX PALIERS + toujours des 1-weakness"""
+	"""Distribution progressive avec TROIS PALIERS + CAP à 3 faiblesses max"""
 	
 	var rand = randf()
 	
-	# ===== PALIER 1 : Montée vers difficulté moyenne (progression 0.0 - 1.0) =====
+	# ===== PALIER 1 : Facile/Normal (progression 0.0 - 1.0) =====
 	if difficulty_progression < 1.0:
-		# Interpolation linéaire entre début et fin du palier 1
-		var p = difficulty_progression  # 0.0 → 1.0
+		var p = difficulty_progression
 		
-		# Début (p=0) : 80% 1w, 20% 2w
+		# Début (p=0) : 85% 1w, 15% 2w
 		# Fin (p=1) : 40% 1w, 45% 2w, 15% 3w
-		var chance_1w = lerp(0.80, 0.40, p)
-		var chance_2w = lerp(0.20, 0.45, p)
-		var chance_3w = lerp(0.0, 0.15, p)
+		var chance_1w = lerp(0.85, 0.60, p)
+		var chance_2w = lerp(0.15, 0.35, p)
+		var chance_3w = lerp(0.0, 0.05, p)
 		
 		if rand < chance_1w:
 			return 1
@@ -176,25 +198,40 @@ func calculate_progressive_weaknesses() -> int:
 		else:
 			return 3
 	
-	# ===== PALIER 2 : Difficulté maximale (progression 1.0 - 2.0) =====
-	else:
-		var p = difficulty_progression - 1.0  # 0.0 → 1.0 dans le deuxième palier
+	# ===== PALIER 2 : Difficile (progression 1.0 - 2.0) =====
+	elif difficulty_progression < 2.0:
+		var p = difficulty_progression - 1.0
 		
 		# Début (p=0) : 30% 1w, 50% 2w, 20% 3w
-		# Fin (p=1) : 20% 1w, 40% 2w, 30% 3w, 10% 4w
-		var chance_1w = lerp(0.30, 0.20, p)
-		var chance_2w = lerp(0.50, 0.40, p)
-		var chance_3w = lerp(0.20, 0.30, p)
-		var chance_4w = lerp(0.0, 0.10, p)
+		# Fin (p=1) : 25% 1w, 45% 2w, 30% 3w
+		var chance_1w = lerp(0.40, 0.35, p)
+		var chance_2w = lerp(0.50, 0.45, p)
+		var chance_3w = lerp(0.10, 0.20, p)
+		
+		if rand < chance_1w:
+			return 1
+		elif rand < chance_1w + chance_2w:
+			
+			return 2
+		else:
+			return 3
+	
+	# ===== PALIER 3 : ENFER (progression 2.0 - 3.0) =====
+	else:
+		var p = difficulty_progression - 2.0
+		
+		# Début (p=0) : 20% 1w, 40% 2w, 40% 3w
+		# Fin (p=1) : 15% 1w, 35% 2w, 50% 3w
+		var chance_1w = lerp(0.20, 0.15, p)
+		var chance_2w = lerp(0.40, 0.35, p)
+		var chance_3w = lerp(0.40, 0.50, p)
 		
 		if rand < chance_1w:
 			return 1
 		elif rand < chance_1w + chance_2w:
 			return 2
-		elif rand < chance_1w + chance_2w + chance_3w:
-			return 3
 		else:
-			return 4
+			return 3  # CAP MAX à 3 faiblesses!
 
 func generate_smart_weaknesses(count: int) -> Array:
 	"""Génère des faiblesses avec des patterns intéressants"""

@@ -6,7 +6,7 @@ signal weakness_hit(enemy, remaining_weaknesses)
 signal wrong_spell_used(enemy, spell_type)
 
 var top_or_bottom = "bottom"
-
+var is_dead
 # Liste des faiblesses dans l'ordre
 var weaknesses : Array = ["fire"]  # Par défaut
 var current_weakness_index : int = 0
@@ -225,10 +225,10 @@ func set_weaknesses(new_weaknesses: Array):
 	update_weakness_display()
 
 func update_character_appearance():
-	"""Configure les animations du personnage selon ses weaknesses"""
+	"""Configure les animations du personnage selon ses weaknesses INITIALES (appelé au début)"""
 	if weaknesses.is_empty():
 		return
-	# Déterminer le type de personnage selon le nombre de weaknesses
+	
 	var num_weaknesses = weaknesses.size()
 	character_type = ""
 	
@@ -237,22 +237,18 @@ func update_character_appearance():
 			character_type = "Valet"
 		2:
 			character_type = "Reine"
-		3, _:  # 3 ou plus = Roi
+		3, _:
 			character_type = "Roi"
 	
-	# Déterminer la couleur (suit) selon la dernière weakness
-	var suit = weaknesses[-1]  # Dernière faiblesse = couleur du personnage
+	var suit = weaknesses[-1]
 	
-	# Jouer l'animation du personnage principal
 	var perso_animation = character_type + "_" + suit
 	if perso_sprite.sprite_frames.has_animation(perso_animation):
 		perso_sprite.play(perso_animation)
 	else:
 		push_warning("Animation introuvable : " + perso_animation)
 	
-	# Gérer la couronne (Roi et Reine seulement)
 	if character_type == "Roi" or character_type == "Reine":
-		# La couleur de la couronne est weakness[-2] (avant-dernière)
 		if num_weaknesses >= 2:
 			var couronne_suit = weaknesses[-2]
 			var couronne_animation = character_type + "_Couronne_" + couronne_suit
@@ -263,12 +259,9 @@ func update_character_appearance():
 		else:
 			couronne_sprite.play("Sans_Couronne")
 	else:
-		# Valet n'a pas de couronne
 		couronne_sprite.play("Sans_Couronne")
 	
-	# Gérer le sceptre (Roi seulement)
 	if character_type == "Roi":
-		# La couleur du sceptre est weakness[-3] (avant-avant-dernière)
 		if num_weaknesses >= 3:
 			var sceptre_suit = weaknesses[-3]
 			var sceptre_animation = "Roi_Sceptre_" + sceptre_suit
@@ -279,9 +272,44 @@ func update_character_appearance():
 		else:
 			sceptre_sprite.play("Roi_sans_sceptre")
 	else:
-		# Reine et Valet n'ont pas de sceptre
 		sceptre_sprite.play("Roi_sans_sceptre")
 		$WeaknessContainer.position.x+=20
+
+func update_character_appearance_from_remaining():
+	"""Met à jour UNIQUEMENT les accessoires selon les weaknesses RESTANTES (le perso ne change pas)"""
+	var remaining_weaknesses = weaknesses.slice(current_weakness_index)
+	
+	if remaining_weaknesses.is_empty():
+		return
+	
+	var num_remaining = remaining_weaknesses.size()
+	
+	# Le personnage garde son type initial (character_type ne change JAMAIS)
+	# On met à jour UNIQUEMENT la couronne et le sceptre
+	
+	# Gérer la couronne selon les faiblesses restantes
+	if num_remaining >= 2 and (character_type == "Roi" or character_type == "Reine"):
+		var couronne_suit = remaining_weaknesses[-2]
+		var couronne_animation = character_type + "_Couronne_" + couronne_suit
+		if couronne_sprite.sprite_frames.has_animation(couronne_animation):
+			couronne_sprite.play(couronne_animation)
+		else:
+			couronne_sprite.play("Sans_Couronne")
+	else:
+		# Plus assez de faiblesses pour une couronne
+		couronne_sprite.play("Sans_Couronne")
+	
+	# Gérer le sceptre selon les faiblesses restantes
+	if num_remaining >= 3 and character_type == "Roi":
+		var sceptre_suit = remaining_weaknesses[-3]
+		var sceptre_animation = "Roi_Sceptre_" + sceptre_suit
+		if sceptre_sprite.sprite_frames.has_animation(sceptre_animation):
+			sceptre_sprite.play(sceptre_animation)
+		else:
+			sceptre_sprite.play("Roi_sans_sceptre")
+	else:
+		# Plus assez de faiblesses pour un sceptre
+		sceptre_sprite.play("Roi_sans_sceptre")
 
 func _on_area_entered(area):
 	if area.has_method("get_spell_type"):
@@ -300,19 +328,23 @@ func receive_spell(spell_type: String):
 	else:
 		hit_wrong_spell(spell_type)
 
-func hit_correct_weakness(spell_type: String):
+func hit_correct_weakness(_spell_type: String):
 	# Animation de "hit" rapide
 	hit_bounce_animation()
-	
+
 	current_weakness_index += 1
-	
+
 	if current_weakness_index >= weaknesses.size():
 		weakness_hit.emit(self, 0)
 		destroy()
 	else:
 		var remaining = weaknesses.size() - current_weakness_index
-		weakness_hit.emit(self, remaining)
+		
+		# 🔥 Mettre à jour l'apparence avec les weaknesses RESTANTES uniquement
+		update_character_appearance_from_remaining()
 		update_weakness_display()
+		
+		weakness_hit.emit(self, remaining)
 
 func hit_wrong_spell(spell_type: String):
 	# Animation de secousse pour mauvais sort
@@ -358,11 +390,12 @@ func update_weakness_display():
 			texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 			texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			texture_rect.custom_minimum_size = Vector2(32, 32)
-		
+
 			weakness_container.add_child(texture_rect)
 
 func destroy():
 	is_alive = false
+	is_dead = true
 	collision_shape.set_deferred("disabled",true)
 	$WeaknessContainer.visible = false
 	# Arrêter l'animation de mouvement
