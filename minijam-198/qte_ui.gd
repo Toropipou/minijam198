@@ -1,4 +1,4 @@
-## qte_ui.gd - Version avec anti-spam
+## qte_ui.gd - Version avec anti-spam et changement de textures
 extends Control
 
 signal qte_success
@@ -15,13 +15,9 @@ var button_nodes: Array[TextureRect] = []
 
 var using_gamepad := false
 
-
-
-
-
 # Anti-spam
 var can_input: bool = true
-var penalty_duration: float = 0.2  # 200ms de pénalité
+var penalty_duration: float = 0.2
 var is_first_input: bool = true
 
 # Couleurs pour les états
@@ -31,7 +27,7 @@ var color_failed = Color.RED
 var color_inactive = Color(0.3, 0.3, 0.3, 0.5)
 var color_penalty = Color.ORANGE
 
-# Textures des boutons
+# Textures des boutons clavier
 @export var texture_x: Texture2D
 @export var texture_w: Texture2D
 @export var texture_a: Texture2D
@@ -44,6 +40,8 @@ var color_penalty = Color.ORANGE
 @export var texture_b: Texture2D
 @export var texture_mouse_left: Texture2D
 @export var texture_mouse_right: Texture2D
+
+# Textures manette
 @export var texture_controller_A: Texture2D
 @export var texture_controller_B: Texture2D
 @export var texture_controller_Y: Texture2D
@@ -51,21 +49,26 @@ var color_penalty = Color.ORANGE
 @export var texture_controller_LT: Texture2D
 @export var texture_controller_RT: Texture2D
 
-# Nouvelles textures pour les sorts
-@export var texture_spell_1: Texture2D
-@export var texture_spell_2: Texture2D
-@export var texture_spell_3: Texture2D
-@export var texture_spell_4: Texture2D
+# Mapping des sorts : clavier -> manette
+# Affichage en QWERTY (W/A/S/D) mais Godot gère la conversion clavier
+var spell_mapping_keyboard := {
+	"spell_1": "d",
+	"spell_2": "a", 
+	"spell_3": "s",
+	"spell_4": "w"
+}
+
+var spell_mapping_gamepad := {
+	"spell_1": "controller_B",
+	"spell_2": "controller_X",
+	"spell_3": "controller_A", 
+	"spell_4": "controller_Y"
+}
 
 func _ready() -> void:
 	hide()
 
-func setup(buttons: Array, duration: float) -> void:
-	"""
-	Configure et démarre le QTE
-	buttons: ["spell_1", "spell_2", "spell_3"] ou ["x", "a", "b"]
-	duration: temps total en secondes
-	"""
+func setup(buttons: Array, duration: float, start_with_gamepad: bool = false) -> void:
 	button_sequence = buttons.duplicate()
 	max_time = duration
 	time_left = duration
@@ -73,108 +76,110 @@ func setup(buttons: Array, duration: float) -> void:
 	is_waiting = true
 	can_input = true
 	is_first_input = true
+	using_gamepad = start_with_gamepad  # Initialiser avec le bon état
 	
-	# Nettoyer les anciens boutons
 	_clear_buttons()
-	
-	# Créer les boutons visuels
 	_create_button_display()
-	# Afficher et animer   
 	show()
 
 func _clear_buttons() -> void:
-	"""Supprime tous les boutons existants"""
 	for btn in button_nodes:
 		btn.queue_free()
 	button_nodes.clear()
 
 func _create_button_display() -> void:
-	"""Crée l'affichage des boutons en horizontal"""
 	for i in range(button_sequence.size()):
 		var btn_key = button_sequence[i]
 		var texture_rect = TextureRect.new()
 		
-		# Configuration
 		texture_rect.custom_minimum_size = Vector2(96, 96)
 		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		texture_rect.texture = _get_button_texture(btn_key)
 		texture_rect.pivot_offset = texture_rect.custom_minimum_size / 2
-		# Couleur selon l'état
+		
 		if i == 0:
-			texture_rect.modulate = color_waiting  # Premier bouton actif
+			texture_rect.modulate = color_waiting
 		else:
-			texture_rect.modulate = color_inactive  # Autres inactifs
+			texture_rect.modulate = color_inactive
 		
 		buttons_container.add_child.call_deferred(texture_rect)
 		button_nodes.append(texture_rect)
 	
-	# Animation du bouton actif
 	if button_nodes.size() > 0:
 		_pulse_current_button()
 
 func _get_button_texture(button_key: String) -> Texture2D:
-	"""Retourne la texture correspondant au bouton"""
-	match button_key:
-		"spell_1": return texture_spell_1 if texture_spell_1 else texture_x
-		"spell_2": return texture_spell_2 if texture_spell_2 else texture_a
-		"spell_3": return texture_spell_3 if texture_spell_3 else texture_b
-		"spell_4": return texture_spell_4 if texture_spell_4 else texture_e
+	"""Retourne la texture en fonction du type d'input et du bouton"""
+	# Si c'est un sort, utiliser le mapping
+	if button_key.begins_with("spell_"):
+		if using_gamepad:
+			var gamepad_key = spell_mapping_gamepad.get(button_key, "controller_A")
+			return _get_texture_by_name(gamepad_key)
+		else:
+			var keyboard_key = spell_mapping_keyboard.get(button_key, "s")
+			return _get_texture_by_name(keyboard_key)
+	
+	# Sinon, utiliser le nom direct
+	return _get_texture_by_name(button_key)
+
+func _get_texture_by_name(key: String) -> Texture2D:
+	"""Retourne la texture correspondant au nom de touche"""
+	match key:
 		"x": return texture_x
+		"w": return texture_w
 		"a": return texture_a
+		"q": return texture_q
+		"s": return texture_s
+		"d": return texture_d
 		"b": return texture_b
 		"space": return texture_space
 		"e": return texture_e
 		"f": return texture_f
 		"mouse_left": return texture_mouse_left
 		"mouse_right": return texture_mouse_right
-		_: 
-			push_warning("Texture non trouvée pour le bouton : " + button_key)
+		"controller_A": return texture_controller_A
+		"controller_B": return texture_controller_B
+		"controller_X": return texture_controller_X
+		"controller_Y": return texture_controller_Y
+		"controller_LT": return texture_controller_LT
+		"controller_RT": return texture_controller_RT
+		_:
+			push_warning("Texture non trouvée pour : " + key)
 			return null
+
+func _update_all_button_textures() -> void:
+	"""Met à jour toutes les textures selon le type d'input"""
+	for i in range(button_nodes.size()):
+		if i < button_sequence.size():
+			var btn_key = button_sequence[i]
+			button_nodes[i].texture = _get_button_texture(btn_key)
 
 func _process(delta: float) -> void:
 	if not is_waiting:
 		return
 	
-	# Décompte du temps
 	time_left -= delta
 	
-	# Temps écoulé = échec
 	if time_left <= 0.0:
 		_fail()
-		
-	print (using_gamepad)
-		
-	if using_gamepad == false:
-		texture_spell_1 = texture_s
-		texture_spell_2 = texture_d
-		texture_spell_3= texture_w
-		texture_spell_4 = texture_a
-		
-	if using_gamepad == true:
-		texture_spell_1 = texture_controller_B
-		texture_spell_2 = texture_controller_X
-		texture_spell_3= texture_controller_A
-		texture_spell_4 = texture_controller_Y
-		
-		
-		pass
 
 func _input(event: InputEvent) -> void:
-		# Détection manette
+	var previous_gamepad_state = using_gamepad
+	
+	# Détection du type d'input
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		using_gamepad = true
-		print(using_gamepad)
-
-	# Détection clavier / souris
-	if event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
+	elif event is InputEventKey or event is InputEventMouseButton:
 		using_gamepad = false
-		print(using_gamepad)  
+	
+	# Si le type d'input a changé, mettre à jour les textures
+	if previous_gamepad_state != using_gamepad:
+		_update_all_button_textures()
 	
 	if not is_waiting or current_index >= button_sequence.size():
 		return
 	
-	# Vérifier si on peut accepter des inputs (anti-spam)
 	if not can_input and not is_first_input:
 		return
 	
@@ -185,21 +190,16 @@ func _input(event: InputEvent) -> void:
 		is_first_input = false
 		_on_button_pressed()
 	elif _check_any_input(event):
-		# Mauvais input détecté -> pénalité
 		is_first_input = false
 		_apply_penalty()
 
 func _check_input(event: InputEvent, button: String) -> bool:
-	"""Vérifie si l'input correspond au bouton attendu"""
+	# D'abord vérifier si c'est une action spell
+	if button.begins_with("spell_"):
+		return event.is_action_pressed(button)
+	
+	# Ensuite les autres actions
 	match button:
-		"spell_1":
-			return event.is_action_pressed("spell_1")
-		"spell_2":
-			return event.is_action_pressed("spell_2")
-		"spell_3":
-			return event.is_action_pressed("spell_3")
-		"spell_4":
-			return event.is_action_pressed("spell_4")
 		"space":
 			return event.is_action_pressed("ui_accept")
 		"mouse_left":
@@ -207,67 +207,64 @@ func _check_input(event: InputEvent, button: String) -> bool:
 		"mouse_right":
 			return event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT
 		_:
-			# Touches clavier génériques (x, a, b, e, f, etc.)
-			return event is InputEventKey and event.pressed and event.keycode == OS.find_keycode_from_string(button.to_upper())
+			# Pour les touches clavier simples (w, a, s, d, etc.)
+			if event is InputEventKey and event.pressed:
+				var key_string = OS.get_keycode_string(event.keycode).to_lower()
+				return key_string == button.to_lower()
+			return false
 
 func _check_any_input(event: InputEvent) -> bool:
-	"""Vérifie si un input QTE quelconque a été détecté"""
 	if event is InputEventKey and event.pressed:
+			# Ignorer les touches modificatrices
+		var ignored_keys = [
+			KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_META,
+			KEY_CAPSLOCK, KEY_NUMLOCK, KEY_SCROLLLOCK
+		]
+		if event.keycode in ignored_keys:
+			return false  # <-- Shift ne compte pas comme un input
 		return true
 	if event is InputEventMouseButton and event.pressed:
 		return true
-	# Vérifier les actions de sorts
 	for spell in ["spell_1", "spell_2", "spell_3", "spell_4"]:
 		if event.is_action_pressed(spell):
 			return true
 	return false
 
 func _apply_penalty() -> void:
-	"""Applique une pénalité pour mauvais input"""
 	can_input = false
 	
-	# Effet visuel de pénalité sur le bouton actuel
 	if current_index < button_nodes.size():
 		var btn = button_nodes[current_index]
 		var original_color = btn.modulate
 		
-		# Flash orange
 		var tween = create_tween()
 		tween.tween_property(btn, "modulate", color_penalty, 0.1)
 		tween.tween_property(btn, "modulate", original_color, 0.1)
 		
-		# Shake
 		var shake_tween = create_tween()
 		shake_tween.tween_property(btn, "position:x", btn.position.x + 10, 0.05)
 		shake_tween.tween_property(btn, "position:x", btn.position.x - 10, 0.05)
 		shake_tween.tween_property(btn, "position:x", btn.position.x, 0.05)
 	
-	# Timer pour réactiver les inputs
 	await get_tree().create_timer(penalty_duration).timeout
 	can_input = true
 
 func _on_button_pressed() -> void:
-	"""Gère l'appui sur le bon bouton"""
-	# Marquer le bouton comme réussi
 	button_nodes[current_index].modulate = color_success
 	
-	# Animation de succès
 	var tween = create_tween()
 	tween.tween_property(button_nodes[current_index], "scale", Vector2(1.3, 1.3), 0.1)
 	tween.tween_property(button_nodes[current_index], "scale", Vector2(1.0, 1.0), 0.1)
 	
 	current_index += 1
 	
-	# Vérifier si séquence terminée
 	if current_index >= button_sequence.size():
 		_success()
 	else:
-		# Activer le bouton suivant
 		button_nodes[current_index].modulate = color_waiting
 		_pulse_current_button()
 
 func _pulse_current_button() -> void:
-	"""Anime le bouton actuel"""
 	if current_index < button_nodes.size():
 		var btn = button_nodes[current_index]
 		var tween = create_tween().set_loops()
@@ -275,10 +272,8 @@ func _pulse_current_button() -> void:
 		tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.5)
 
 func _success() -> void:
-	"""Séquence QTE réussie"""
 	is_waiting = false
 	
-	# Tous les boutons en vert
 	for btn in button_nodes:
 		btn.modulate = color_success
 
@@ -286,10 +281,8 @@ func _success() -> void:
 	hide()
 
 func _fail() -> void:
-	"""Séquence QTE échouée"""
 	is_waiting = false
 	
-	# Bouton actuel en rouge, reste en gris
 	if current_index < button_nodes.size():
 		button_nodes[current_index].modulate = color_failed
 	

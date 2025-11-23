@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://clxs5gwisal5m"]
+[gd_scene load_steps=16 format=3 uid="uid://clxs5gwisal5m"]
 
 [ext_resource type="Script" uid="uid://cyh0d64pfygbl" path="res://addons/maaacks_game_template/base/nodes/utilities/pause_menu_controller.gd" id="1_bmy5n"]
 [ext_resource type="Script" uid="uid://d1o7bhnrmt2pl" path="res://scenes/game_scene/game_ui.gd" id="1_y85d6"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://h1awbnk55v2x" path="res://scenes/entity/enemy_spawner.tscn" id="10_8qp3c"]
 [ext_resource type="Script" uid="uid://bnhmjy582mlax" path="res://scenes/game_scene/configurable_sub_viewport.gd" id="11_ulq3g"]
 [ext_resource type="Script" uid="uid://bmcttnpvsi36l" path="res://scenes/game_scene/game_timer.gd" id="12_gpor5"]
+[ext_resource type="Script" uid="uid://ksynd2k1s6ah" path="res://addons/godot_sfxr/SfxrStreamPlayer.gd" id="14_ascoc"]
 
 [node name="GameUI" type="Control"]
 layout_mode = 3
@@ -31,7 +32,6 @@ focused_viewport = NodePath("../ViewportContainer/ConfigurableSubViewport")
 
 [node name="BackgroundMusicPlayer" parent="." instance=ExtResource("3_3re04")]
 stream = ExtResource("5_3re04")
-stream_paused = true
 script = ExtResource("6_ascoc")
 
 [node name="ViewportContainer" type="SubViewportContainer" parent="."]
@@ -58,7 +58,7 @@ script = ExtResource("11_ulq3g")
 [node name="Bg" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_vbgr5")]
 
 [node name="Player" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("7_ul61k")]
-position = Vector2(200, 722)
+position = Vector2(240, 721)
 scale = Vector2(2, 2)
 
 [node name="hud" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("8_bqcs8")]
@@ -70,6 +70,36 @@ position = Vector2(7, 254)
 position = Vector2(1214, 520)
 spawn_position_top = Vector2(1920, 350)
 spawn_position_bottom = Vector2(1920, 722)
+
+[node name="SfxrStreamPlayer" type="AudioStreamPlayer" parent="ViewportContainer/ConfigurableSubViewport"]
+bus = &"SFX"
+script = ExtResource("14_ascoc")
+wave/type = 1
+sample_params/sound_vol = 0.25
+sample_params/sample_rate = 44100.0
+envelope/attack_time = 0.0
+envelope/sustain_time = 0.6641
+envelope/punch_time = 0.0
+envelope/decay_time = 0.0
+frequency/start_frequency = 0.35173364
+frequency/min_freq_cutoff = 0.0
+frequency/slide = 0.0
+frequency/delta_slide = 0.0
+vibrato/depth = 0.0
+vibrato/speed = 0.0
+arpeggiation/frequency_mult = 0.0
+arpeggiation/change_speed = 0.0
+duty_cycle/duty_cycle = 0.0
+duty_cycle/sweep = 0.0
+retrigger/rate = 0.0
+flanger/offset = 0.0
+flanger/sweep = 0.0
+low_pass_filter/cutoff_frequency = 1.0
+low_pass_filter/cutoff_sweep = 0.0
+low_pass_filter/resonance = 0.0
+high_pass_filter/cutoff_frequency = 0.0
+high_pass_filter/cutoff_sweep = 0.0
+metadata/_custom_type_script = "uid://ksynd2k1s6ah"
 
 [node name="GameTimer" type="Node" parent="."]
 script = ExtResource("12_gpor5")

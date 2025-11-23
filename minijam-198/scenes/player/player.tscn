@@ -1,17 +1,69 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0s7hhx13v7j1"]
+[gd_scene load_steps=17 format=3 uid="uid://d0s7hhx13v7j1"]
 
 [ext_resource type="Script" uid="uid://jpgpdr15v7ha" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://cco54q68qyf7u" path="res://assets/UI/fleche_lane.png" id="2_dovo2"]
+[ext_resource type="AudioStream" uid="uid://bx0ljb7yxg4bx" path="res://assets/songs/Player/Footsteps.wav" id="3_lvxji"]
+[ext_resource type="Script" uid="uid://ksynd2k1s6ah" path="res://addons/godot_sfxr/SfxrStreamPlayer.gd" id="4_p47bc"]
+[ext_resource type="Texture2D" uid="uid://xupiv5fh88u7" path="res://assets/player/Joker/Lancer_Carte.png" id="5_gx1jg"]
+[ext_resource type="Texture2D" uid="uid://55tc2qi7dm6p" path="res://assets/player/Joker/Run/1.png" id="6_ugbui"]
+[ext_resource type="Texture2D" uid="uid://bo8pwefhfjeew" path="res://assets/player/Joker/Run/2.png" id="7_fcs02"]
+[ext_resource type="Texture2D" uid="uid://1m2fhadwlvih" path="res://assets/player/Joker/Run/3.png" id="8_myrg7"]
+[ext_resource type="Texture2D" uid="uid://cygnljaj1s7pc" path="res://assets/player/Joker/Run/4.png" id="9_kvlxm"]
+[ext_resource type="Texture2D" uid="uid://d2ksk82hs8l8c" path="res://assets/player/Joker/Run/5.png" id="10_uf5tr"]
+[ext_resource type="Texture2D" uid="uid://6jdf5v04uf5u" path="res://assets/player/Joker/Run/6.png" id="11_lgqa7"]
+[ext_resource type="Texture2D" uid="uid://ccnbr3fp717jt" path="res://assets/player/Joker/Run/7.png" id="12_8ydkj"]
+[ext_resource type="Texture2D" uid="uid://0pad55bh0x2s" path="res://assets/player/Joker/Run/8.png" id="13_3j4b4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
 size = Vector2(40, 40)
 
-[node name="Player" type="CharacterBody2D"]
-script = ExtResource("1_8afob")
+[sub_resource type="AtlasTexture" id="AtlasTexture_yj68g"]
+atlas = ExtResource("5_gx1jg")
+region = Rect2(0, 0, 952, 1191)
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[sub_resource type="SpriteFrames" id="SpriteFrames_ioxgp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yj68g")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_ugbui")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_fcs02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_myrg7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_kvlxm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_uf5tr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_lgqa7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_8ydkj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_3j4b4")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
+
+[node name="Player" type="CharacterBody2D"]
+texture_filter = 4
+script = ExtResource("1_8afob")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(20, 20)
@@ -26,3 +78,41 @@ position = Vector2(20, 20)
 scale = Vector2(4, 4)
 texture = ExtResource("2_dovo2")
 offset = Vector2(18.75, -0.25)
+
+[node name="SfxrStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_lvxji")
+bus = &"SFX"
+script = ExtResource("4_p47bc")
+wave/type = 1
+sample_params/sound_vol = 0.25
+sample_params/sample_rate = 44100.0
+envelope/attack_time = 0.0
+envelope/sustain_time = 0.6641
+envelope/punch_time = 0.0
+envelope/decay_time = 0.0
+frequency/start_frequency = 0.35173364
+frequency/min_freq_cutoff = 0.0
+frequency/slide = 0.0
+frequency/delta_slide = 0.0
+vibrato/depth = 0.0
+vibrato/speed = 0.0
+arpeggiation/frequency_mult = 0.0
+arpeggiation/change_speed = 0.0
+duty_cycle/duty_cycle = 0.0
+duty_cycle/sweep = 0.0
+retrigger/rate = 0.0
+flanger/offset = 0.0
+flanger/sweep = 0.0
+low_pass_filter/cutoff_frequency = 1.0
+low_pass_filter/cutoff_sweep = 0.0
+low_pass_filter/resonance = 0.0
+high_pass_filter/cutoff_frequency = 0.0
+high_pass_filter/cutoff_sweep = 0.0
+metadata/_custom_type_script = "uid://ksynd2k1s6ah"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 4
+scale = Vector2(0.07, 0.07)
+sprite_frames = SubResource("SpriteFrames_ioxgp")
+animation = &"run"
+autoplay = "run"

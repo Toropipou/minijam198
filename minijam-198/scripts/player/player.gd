@@ -1,7 +1,7 @@
 # Player.gd
 extends CharacterBody2D
 
-@onready var sprite = $ColorRect
+@onready var sprite = $AnimatedSprite2D
 @onready var game_manager = get_parent().get_parent().get_parent()
 @onready var spell_projectile_scene = preload("res://scenes/entity/spell_projectile.tscn")
 
@@ -92,6 +92,12 @@ func _process(_delta: float) -> void:
 				print("Impossible de lancer le sort (mana ou cooldown)")
 			
 			break
+
+func play_animation_attack():
+	sprite.play("attack")
+	await get_tree().create_timer(0.5).timeout
+	sprite.play("run")
+	pass
 
 func update_arrow_direction():
 	"""Met à jour la direction de la flèche pour pointer vers le couloir ciblé"""

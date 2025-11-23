@@ -7,9 +7,18 @@ signal qte_failed
 signal qte_ended
 
 @export var qte_scene: PackedScene
-
 var current_qte: Control = null
 var is_active: bool = false
+
+# Garde en mémoire le dernier type d'input
+var last_input_was_gamepad: bool = false
+
+func _input(event: InputEvent) -> void:
+	# Détecter le type d'input en continu
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		last_input_was_gamepad = true
+	elif event is InputEventKey or event is InputEventMouseButton:
+		last_input_was_gamepad = false
 
 func start_qte(buttons: Array, duration: float = 2.0) -> void:
 	"""
@@ -27,11 +36,10 @@ func start_qte(buttons: Array, duration: float = 2.0) -> void:
 	
 	# Instancier la scène QTE
 	current_qte = qte_scene.instantiate()
-	#print(current_qte)
 	add_child(current_qte)
 	
-	# Configurer le QTE
-	current_qte.setup(buttons, duration)
+	# Configurer le QTE avec le type d'input actuel
+	current_qte.setup(buttons, duration, last_input_was_gamepad)
 	
 	# Connecter les signaux
 	current_qte.qte_success.connect(_on_qte_success)
