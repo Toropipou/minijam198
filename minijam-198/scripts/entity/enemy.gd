@@ -412,7 +412,7 @@ func destroy():
 	tween.tween_property(sceptre_sprite, "modulate:a", 0.0, 0.3)
 	
 	# Rotation finale dramatique
-	tween.tween_property(self, "rotation_degrees", 360, 0.5).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "rotation_degrees", 360, 0.5).set_ease(Tween.EASE_IN)	
 	tween.tween_property(self, "scale", Vector2.ZERO, 0.3).set_ease(Tween.EASE_IN)
 	
 	await tween.finished
