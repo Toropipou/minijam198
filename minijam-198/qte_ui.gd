@@ -13,6 +13,12 @@ var max_time: float = 0.0
 var is_waiting: bool = false
 var button_nodes: Array[TextureRect] = []
 
+var using_gamepad := false
+
+
+
+
+
 # Anti-spam
 var can_input: bool = true
 var penalty_duration: float = 0.2  # 200ms de pénalité
@@ -27,11 +33,15 @@ var color_penalty = Color.ORANGE
 
 # Textures des boutons
 @export var texture_x: Texture2D
+@export var texture_w: Texture2D
 @export var texture_a: Texture2D
-@export var texture_b: Texture2D
+@export var texture_q: Texture2D
+@export var texture_s: Texture2D
+@export var texture_d: Texture2D
 @export var texture_space: Texture2D
 @export var texture_e: Texture2D
 @export var texture_f: Texture2D
+@export var texture_b: Texture2D
 @export var texture_mouse_left: Texture2D
 @export var texture_mouse_right: Texture2D
 @export var texture_controller_A: Texture2D
@@ -132,8 +142,35 @@ func _process(delta: float) -> void:
 	# Temps écoulé = échec
 	if time_left <= 0.0:
 		_fail()
+		
+	print (using_gamepad)
+		
+	if using_gamepad == false:
+		texture_spell_1 = texture_s
+		texture_spell_2 = texture_d
+		texture_spell_3= texture_w
+		texture_spell_4 = texture_a
+		
+	if using_gamepad == true:
+		texture_spell_1 = texture_controller_B
+		texture_spell_2 = texture_controller_X
+		texture_spell_3= texture_controller_A
+		texture_spell_4 = texture_controller_Y
+		
+		
+		pass
 
 func _input(event: InputEvent) -> void:
+		# Détection manette
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		using_gamepad = true
+		print(using_gamepad)
+
+	# Détection clavier / souris
+	if event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
+		using_gamepad = false
+		print(using_gamepad)  
+	
 	if not is_waiting or current_index >= button_sequence.size():
 		return
 	
