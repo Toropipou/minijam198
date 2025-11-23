@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6k5nnpbypshi"]
+[gd_scene load_steps=8 format=3 uid="uid://c6k5nnpbypshi"]
 
 [ext_resource type="Script" uid="uid://bhgs1upaahk3y" path="res://addons/maaacks_game_template/base/nodes/menus/main_menu/main_menu.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cv8g63wq0ouu4" path="res://assets/UI/Main_menu.png" id="4_im16j"]
 [ext_resource type="Script" uid="uid://1nf36h0gms3q" path="res://addons/maaacks_game_template/base/nodes/utilities/capture_focus.gd" id="4_l1ebe"]
 [ext_resource type="PackedScene" uid="uid://bkcsjsk2ciff" path="res://addons/maaacks_game_template/base/nodes/music_players/background_music_player.tscn" id="4_w8sbm"]
 [ext_resource type="Script" uid="uid://b5oej1q4h7jvh" path="res://addons/maaacks_game_template/base/nodes/autoloads/ui_sound_controller/ui_sound_controller.gd" id="6_bs342"]
@@ -28,8 +29,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("4_im16j")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundTextureRect"]
+z_index = -1
+layout_mode = 0
+offset_right = 2133.0
+offset_bottom = 1153.0
+color = Color(0.9411765, 0.8784314, 0.6666667, 1)
 
 [node name="VersionMargin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -68,10 +77,16 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -421.99997
+offset_top = -252.00002
+offset_right = -422.0
+offset_bottom = -252.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.4400003, 1.4400003)
 
 [node name="TitleMargin" type="MarginContainer" parent="MenuContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_top = 24
 
@@ -86,12 +101,13 @@ anchor_right = 1.0
 offset_bottom = 67.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 48
-text = "Title"
+text = "To be defined but speed"
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("7_j7612")
 
 [node name="SubTitleMargin" type="MarginContainer" parent="MenuContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_top = 92
 
