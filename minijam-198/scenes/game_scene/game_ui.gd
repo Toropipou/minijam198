@@ -826,7 +826,7 @@ func cast_spell(spell_type: String, lane) -> bool:
 	if current_mana <= 0:
 		qte_mandatory = true
 		return false
-	
+	player.play_animation_attack()
 	current_mana -= SPELL_MANA_COST
 	spell_cooldown_timer = MIN_SPELL_COOLDOWN
 	

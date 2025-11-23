@@ -58,10 +58,6 @@ texture_controller_Y = ExtResource("7_c1e2c")
 texture_controller_X = ExtResource("5_edh1y")
 texture_controller_LT = SubResource("AtlasTexture_c1e2c")
 texture_controller_RT = SubResource("AtlasTexture_o0mu5")
-texture_spell_1 = ExtResource("4_gactx")
-texture_spell_2 = ExtResource("5_edh1y")
-texture_spell_3 = ExtResource("6_f546g")
-texture_spell_4 = ExtResource("7_c1e2c")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 0

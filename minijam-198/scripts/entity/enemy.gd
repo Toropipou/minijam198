@@ -7,8 +7,7 @@ signal wrong_spell_used(enemy, spell_type)
 
 var top_or_bottom = "bottom"
 var is_dead
-# Liste des faiblesses dans l'ordre
-var weaknesses : Array = ["fire"]  # Par défaut
+var weaknesses : Array = ["fire"]
 var current_weakness_index : int = 0
 @onready var sprites = $sprites
 @onready var weakness_container = $WeaknessContainer
@@ -17,23 +16,36 @@ var current_weakness_index : int = 0
 @onready var couronne_sprite = $sprites/Couronne
 @onready var sceptre_sprite = $sprites/Sceptre
 var character_type
-# Paramètres d'animation de mouvement
-@export var hop_height : float = 20.0  # Hauteur des petits sauts
-@export var hop_duration : float = 0.4  # Durée d'un saut
-@export var hop_interval : float = 0.8  # Temps entre chaque saut
-@export var squash_intensity : float = 0.2  # Intensité du squash/stretch
+
+# Paramètres d'animation
+@export var hop_height : float = 20.0
+@export var hop_duration : float = 0.4
+@export var hop_interval : float = 0.8
+@export var squash_intensity : float = 0.2
 
 var movement_tween : Tween
 var hop_tween : Tween
 var initial_y : float = 0.0
 var dust_particles : CPUParticles2D
 
-# Preload des textures pour chaque type de sort
-const WEAKNESS_TEXTURES = {
-	"Coeur": preload("res://assets/UI/bouton/b_button.png"),
-	"Carreau": preload("res://assets/UI/bouton/x_button.png"),
-	"Trefle": preload("res://assets/UI/bouton/a_button.png"),
-	"Pique": preload("res://assets/UI/bouton/y_button.png")
+# Détection du type d'input
+var using_gamepad : bool = true
+
+# Textures CLAVIER (WASD)
+const WEAKNESS_TEXTURES_KEYBOARD = {
+	"Coeur": preload("res://assets/UI/bouton/d_keyboard_button.png"),
+	"Carreau": preload("res://assets/UI/bouton/a_keyboard_button.png"),
+	"Trefle": preload("res://assets/UI/bouton/s_keyboard_button.png"),
+	"Pique": preload("res://assets/UI/bouton/w_keyboard_button.png")
+	
+}
+
+# Textures MANETTE
+const WEAKNESS_TEXTURES_GAMEPAD = {
+	"Coeur": preload("res://assets/UI/bouton/b_button.png"),   # D
+	"Carreau": preload("res://assets/UI/bouton/x_button.png"), # A
+	"Trefle": preload("res://assets/UI/bouton/a_button.png"),  # S
+	"Pique": preload("res://assets/UI/bouton/y_button.png")    # W
 }
 
 # Couleurs pour les sorts
@@ -44,9 +56,9 @@ const WEAKNESS_COLORS = {
 	"Pique": Color(0.984, 0.936, 0.0, 1.0)
 }
 
-# État
 var is_alive : bool = true
 var initial_sprites_scale : Vector2 = Vector2.ONE
+
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	initial_sprites_scale = sprites.scale
@@ -54,30 +66,38 @@ func _ready() -> void:
 	initial_y = position.y
 	setup_dust_particles()
 	
-	# Démarrer l'animation de sauts seulement si pas sur un tapis volant
 	if top_or_bottom == "bottom":
 		start_hopping_animation()
 	else:
 		start_floating_animation()
 
+func _input(event: InputEvent) -> void:
+	"""Détecte le changement de type d'input et met à jour les icônes"""
+	var previous_state = using_gamepad
+	
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		using_gamepad = true
+	elif event is InputEventKey or event is InputEventMouseButton:
+		using_gamepad = false
+	
+	# Si le type d'input a changé, mettre à jour l'affichage
+	if previous_state != using_gamepad:
+		update_weakness_display()
+
 func setup_dust_particles():
-	"""Crée les particules de poussière pour les atterrissages"""
 	dust_particles = CPUParticles2D.new()
 	add_child(dust_particles)
 	
-	# Configuration des particules
 	dust_particles.emitting = false
 	dust_particles.one_shot = true
 	dust_particles.amount = 8
 	dust_particles.lifetime = 0.6
 	dust_particles.explosiveness = 1.0
 	
-	# Apparence
 	dust_particles.scale_amount_min = 2.0
 	dust_particles.scale_amount_max = 4.0
-	dust_particles.color = Color(0.8, 0.7, 0.6, 0.8)  # Couleur poussière
+	dust_particles.color = Color(0.8, 0.7, 0.6, 0.8)
 	
-	# Physique
 	dust_particles.direction = Vector2(0, -1)
 	dust_particles.spread = 45.0
 	dust_particles.gravity = Vector2(0, 100)
@@ -86,13 +106,12 @@ func setup_dust_particles():
 	dust_particles.angular_velocity_min = -180.0
 	dust_particles.angular_velocity_max = 180.0
 	
-	# Positionnement au niveau des pieds
-	
-	if character_type=="Roi":dust_particles.position = Vector2(20, 40)
-	else:dust_particles.position = Vector2(40, +80)
+	if character_type=="Roi":
+		dust_particles.position = Vector2(20, 40)
+	else:
+		dust_particles.position = Vector2(40, +80)
 
 func start_hopping_animation():
-	"""Animation de petits sauts pour les ennemis au sol"""
 	if hop_tween:
 		hop_tween.kill()
 	
@@ -100,10 +119,10 @@ func start_hopping_animation():
 		hop_height = hop_height *1.5
 	if character_type=="Veine":
 		hop_height = hop_duration/2
+	
 	hop_tween = create_tween()
 	hop_tween.set_loops()
 	
-	# 1. Préparation du saut (squash)
 	hop_tween.tween_property(
 		sprites,
 		"scale",
@@ -111,7 +130,6 @@ func start_hopping_animation():
 		hop_duration * 0.15
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
-	# 2. Envol (stretch + montée)
 	hop_tween.parallel().tween_property(
 		self,
 		"position:y",
@@ -133,7 +151,6 @@ func start_hopping_animation():
 		hop_duration * 0.2
 	)
 	
-	# 3. Descente
 	hop_tween.parallel().tween_property(
 		self,
 		"position:y",
@@ -141,7 +158,6 @@ func start_hopping_animation():
 		hop_duration * 0.4
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	
-	# 4. Atterrissage (squash + dust)
 	hop_tween.chain().tween_callback(spawn_dust_particles)
 	
 	hop_tween.parallel().tween_property(
@@ -158,10 +174,9 @@ func start_hopping_animation():
 		hop_duration * 0.15
 	).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
-	# 5. Pause avant le prochain saut
 	hop_tween.chain().tween_interval(hop_interval)
+
 func start_floating_animation():
-	"""Animation de flottement doux pour les ennemis sur tapis volant"""
 	if hop_tween:
 		hop_tween.kill()
 	
@@ -169,7 +184,6 @@ func start_floating_animation():
 	hop_tween.set_loops()
 	hop_tween.set_parallel(true)
 	
-	# Mouvement vertical doux
 	hop_tween.tween_property(
 		self,
 		"position:y",
@@ -191,7 +205,6 @@ func start_floating_animation():
 		1.2
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
-	# Légère oscillation
 	hop_tween.tween_property(
 		self,
 		"rotation_degrees",
@@ -214,7 +227,6 @@ func start_floating_animation():
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func spawn_dust_particles():
-	"""Fait apparaître les particules de poussière à l'atterrissage"""
 	if dust_particles and top_or_bottom == "bottom":
 		dust_particles.restart()
 
@@ -225,7 +237,6 @@ func set_weaknesses(new_weaknesses: Array):
 	update_weakness_display()
 
 func update_character_appearance():
-	"""Configure les animations du personnage selon ses weaknesses INITIALES (appelé au début)"""
 	if weaknesses.is_empty():
 		return
 	
@@ -276,7 +287,6 @@ func update_character_appearance():
 		$WeaknessContainer.position.x+=20
 
 func update_character_appearance_from_remaining():
-	"""Met à jour UNIQUEMENT les accessoires selon les weaknesses RESTANTES (le perso ne change pas)"""
 	var remaining_weaknesses = weaknesses.slice(current_weakness_index)
 	
 	if remaining_weaknesses.is_empty():
@@ -284,10 +294,6 @@ func update_character_appearance_from_remaining():
 	
 	var num_remaining = remaining_weaknesses.size()
 	
-	# Le personnage garde son type initial (character_type ne change JAMAIS)
-	# On met à jour UNIQUEMENT la couronne et le sceptre
-	
-	# Gérer la couronne selon les faiblesses restantes
 	if num_remaining >= 2 and (character_type == "Roi" or character_type == "Reine"):
 		var couronne_suit = remaining_weaknesses[-2]
 		var couronne_animation = character_type + "_Couronne_" + couronne_suit
@@ -296,10 +302,8 @@ func update_character_appearance_from_remaining():
 		else:
 			couronne_sprite.play("Sans_Couronne")
 	else:
-		# Plus assez de faiblesses pour une couronne
 		couronne_sprite.play("Sans_Couronne")
 	
-	# Gérer le sceptre selon les faiblesses restantes
 	if num_remaining >= 3 and character_type == "Roi":
 		var sceptre_suit = remaining_weaknesses[-3]
 		var sceptre_animation = "Roi_Sceptre_" + sceptre_suit
@@ -308,7 +312,6 @@ func update_character_appearance_from_remaining():
 		else:
 			sceptre_sprite.play("Roi_sans_sceptre")
 	else:
-		# Plus assez de faiblesses pour un sceptre
 		sceptre_sprite.play("Roi_sans_sceptre")
 
 func _on_area_entered(area):
@@ -329,9 +332,7 @@ func receive_spell(spell_type: String):
 		hit_wrong_spell(spell_type)
 
 func hit_correct_weakness(_spell_type: String):
-	# Animation de "hit" rapide
 	hit_bounce_animation()
-
 	current_weakness_index += 1
 
 	if current_weakness_index >= weaknesses.size():
@@ -339,32 +340,25 @@ func hit_correct_weakness(_spell_type: String):
 		destroy()
 	else:
 		var remaining = weaknesses.size() - current_weakness_index
-		
-		# 🔥 Mettre à jour l'apparence avec les weaknesses RESTANTES uniquement
 		update_character_appearance_from_remaining()
 		update_weakness_display()
-		
 		weakness_hit.emit(self, remaining)
 
 func hit_wrong_spell(spell_type: String):
-	# Animation de secousse pour mauvais sort
 	shake_animation()
 	wrong_spell_used.emit(self, spell_type)
 
 func hit_bounce_animation():
-	"""Animation de rebond quand touché par le bon sort"""
 	var bounce_tween = create_tween()
 	bounce_tween.set_parallel(true)
 	
 	var perso_initial_scale = perso_sprite.scale
 	
-	# Scale bounce
 	bounce_tween.tween_property(perso_sprite, "scale", perso_initial_scale * Vector2(1.2, 0.8), 0.1)
 	bounce_tween.chain().tween_property(perso_sprite, "scale", perso_initial_scale * Vector2(0.9, 1.1), 0.1)
 	bounce_tween.chain().tween_property(perso_sprite, "scale", perso_initial_scale, 0.1)
 
 func shake_animation():
-	"""Animation de secousse pour mauvais sort"""
 	var shake_tween = create_tween()
 	var original_pos = position
 	
@@ -375,6 +369,7 @@ func shake_animation():
 	shake_tween.chain().tween_property(self, "position", original_pos, 0.05)
 
 func update_weakness_display():
+	"""Met à jour l'affichage des faiblesses avec les bonnes textures selon l'input"""
 	if not weakness_container:
 		return
 	
@@ -382,13 +377,18 @@ func update_weakness_display():
 		child.queue_free()
 	
 	var remaining_weaknesses = weaknesses.slice(current_weakness_index)
-	if character_type=="Roi":weakness_container.position.x-=40
+	if character_type=="Roi":
+		weakness_container.position.x-=40
+	
+	# Choisir le bon dictionnaire de textures
+	var texture_dict = WEAKNESS_TEXTURES_GAMEPAD if using_gamepad else WEAKNESS_TEXTURES_KEYBOARD
+	
 	for i in range(remaining_weaknesses.size()):
 		var weakness_type = remaining_weaknesses[i]
 		
-		if WEAKNESS_TEXTURES.has(weakness_type):
+		if texture_dict.has(weakness_type):
 			var texture_rect = TextureRect.new()
-			texture_rect.texture = WEAKNESS_TEXTURES[weakness_type]
+			texture_rect.texture = texture_dict[weakness_type]
 			texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 			texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			texture_rect.custom_minimum_size = Vector2(32, 32)
@@ -400,7 +400,7 @@ func destroy():
 	is_dead = true
 	collision_shape.set_deferred("disabled",true)
 	$WeaknessContainer.visible = false
-	# Arrêter l'animation de mouvement
+	
 	if hop_tween:
 		hop_tween.kill()
 	
@@ -413,7 +413,6 @@ func destroy():
 	tween.tween_property(couronne_sprite, "modulate:a", 0.0, 0.3)
 	tween.tween_property(sceptre_sprite, "modulate:a", 0.0, 0.3)
 	
-	# Rotation finale dramatique
 	tween.tween_property(sprites, "rotation_degrees", 360, 0.5).set_ease(Tween.EASE_IN)	
 	tween.tween_property(sprites, "scale", Vector2.ZERO, 0.3).set_ease(Tween.EASE_IN)
 	

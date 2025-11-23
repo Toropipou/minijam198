@@ -351,6 +351,10 @@ text = "definetly speed"
 modulate = Color(1, 1, 1, 0)
 
 [node name="MenuButtonsBoxContainer" parent="MenuContainer/MenuButtonsMargin/MenuButtonsContainer" index="0"]
+offset_left = 478.0
+offset_top = 113.0
+offset_right = 606.0
+offset_bottom = 349.0
 lock = true
 
 [node name="ContinueGameButton" type="Button" parent="MenuContainer/MenuButtonsMargin/MenuButtonsContainer/MenuButtonsBoxContainer" index="1"]
@@ -398,7 +402,7 @@ offset_right = 419.0
 offset_bottom = 197.0
 theme_override_fonts/font = ExtResource("6_ixa71")
 theme_override_font_sizes/font_size = 32
-text = "high score : bite"
+text = "high score : 0"
 
 [connection signal="pressed" from="MenuContainer/MenuButtonsMargin/MenuButtonsContainer/MenuButtonsBoxContainer/ContinueGameButton" to="." method="_on_continue_game_button_pressed"]
 [connection signal="pressed" from="MenuContainer/MenuButtonsMargin/MenuButtonsContainer/MenuButtonsBoxContainer/LevelSelectButton" to="." method="_on_level_select_button_pressed"]
