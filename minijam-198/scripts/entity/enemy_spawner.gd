@@ -5,7 +5,7 @@ signal enemy_spawned(enemy)
 signal wave_completed(wave_number)
 
 @export var enemy_scene : PackedScene = preload("res://scenes/entity/enemy.tscn")
-@export var spawn_position_top : Vector2 = Vector2(1200, 200)
+@export var spawn_position_top : Vector2 = Vector2(1200, 300)
 @export var spawn_position_bottom : Vector2 = Vector2(1200, 547)
 @export var auto_start : bool = false
 

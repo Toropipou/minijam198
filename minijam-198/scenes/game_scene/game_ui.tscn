@@ -1,9 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://clxs5gwisal5m"]
+[gd_scene load_steps=15 format=3 uid="uid://clxs5gwisal5m"]
 
 [ext_resource type="Script" uid="uid://cyh0d64pfygbl" path="res://addons/maaacks_game_template/base/nodes/utilities/pause_menu_controller.gd" id="1_bmy5n"]
 [ext_resource type="Script" uid="uid://d1o7bhnrmt2pl" path="res://scenes/game_scene/game_ui.gd" id="1_y85d6"]
 [ext_resource type="PackedScene" uid="uid://wm2nmhcpk5qp" path="res://scenes/windows/pause_menu_layer.tscn" id="2_7aihr"]
 [ext_resource type="PackedScene" uid="uid://bkcsjsk2ciff" path="res://addons/maaacks_game_template/base/nodes/music_players/background_music_player.tscn" id="3_3re04"]
+[ext_resource type="AudioStream" uid="uid://cep72uech1l80" path="res://assets/songs/Music/banger.mp3" id="5_3re04"]
+[ext_resource type="Script" uid="uid://dmlh1guiqq8bw" path="res://addons/maaacks_game_template/base/nodes/music_players/background_music_player.gd" id="6_ascoc"]
 [ext_resource type="PackedScene" uid="uid://b2xjkcsx5febo" path="res://scenes/game_scene/system/QTE_Manager.tscn" id="6_bmy5n"]
 [ext_resource type="PackedScene" uid="uid://d0s7hhx13v7j1" path="res://scenes/player/player.tscn" id="7_ul61k"]
 [ext_resource type="PackedScene" uid="uid://cfruic0kcm0st" path="res://scenes/enviro/bg.tscn" id="7_vbgr5"]
@@ -28,6 +30,9 @@ pause_menu_packed = ExtResource("2_7aihr")
 focused_viewport = NodePath("../ViewportContainer/ConfigurableSubViewport")
 
 [node name="BackgroundMusicPlayer" parent="." instance=ExtResource("3_3re04")]
+stream = ExtResource("5_3re04")
+stream_paused = true
+script = ExtResource("6_ascoc")
 
 [node name="ViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
@@ -63,7 +68,7 @@ position = Vector2(7, 254)
 
 [node name="EnemySpawner" parent="ViewportContainer/ConfigurableSubViewport" instance=ExtResource("10_8qp3c")]
 position = Vector2(1214, 520)
-spawn_position_top = Vector2(1920, 200)
+spawn_position_top = Vector2(1920, 350)
 spawn_position_bottom = Vector2(1920, 722)
 
 [node name="GameTimer" type="Node" parent="."]

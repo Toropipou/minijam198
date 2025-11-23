@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://1f81npyomue1"
+path="res://.godot/imported/Metal donc marche.mp3-dc75759b976bf3c5a6a8e40975a5bb4b.mp3str"
+
+[deps]
+
+source_file="res://assets/songs/Music/Metal donc marche.mp3"
+dest_files=["res://.godot/imported/Metal donc marche.mp3-dc75759b976bf3c5a6a8e40975a5bb4b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

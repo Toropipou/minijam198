@@ -244,13 +244,17 @@ func _process(delta: float) -> void:
 	# Indicateurs visuels de vitesse par paliers
 	if speed > SPEED_TIER_2_THRESHOLD:
 		hud.going_fast(true, speed)
+		$BackgroundMusicPlayer.pitch_scale = 1.3
 	else:
 		hud.going_fast(false)
+		$BackgroundMusicPlayer.pitch_scale = 1.0
 	
 	if speed > SPEED_TIER_3_THRESHOLD:
 		hud.going_fast2(true)
+		$BackgroundMusicPlayer.pitch_scale = 1.5
 	else:
 		hud.going_fast2(false)	
+		$BackgroundMusicPlayer.pitch_scale = 1.0
 	
 	time_elapsed += delta
 	update_difficulty_progression(delta)
@@ -536,6 +540,7 @@ func increase_speed_from_difficulty(amount: float):
 		hud.show_difficulty_increase()
 
 func start_game():
+	$BackgroundMusicPlayer.play()
 	if not Datagame.tuto_completed and not tutorial_active:
 		_start_tutorial()
 	else:
