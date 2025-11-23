@@ -34,7 +34,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/maaacks_game_template/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_sfxr/plugin.cfg", "res://addons/maaacks_game_template/plugin.cfg")
 
 [gui]
 
@@ -176,3 +176,7 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_environment="res://default_env.tres"
+
+[wwise]
+
+project_settings/use_soundbank_names=false

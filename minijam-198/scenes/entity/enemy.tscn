@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3 uid="uid://dnwkmroyebxay"]
+[gd_scene load_steps=56 format=3 uid="uid://dnwkmroyebxay"]
 
 [ext_resource type="Script" uid="uid://dg57t6mvdea7b" path="res://scripts/entity/enemy.gd" id="1_ho1e7"]
 [ext_resource type="Texture2D" uid="uid://xdoqt3iy2sxm" path="res://assets/UI/coeursymbole.png" id="2_lin2w"]
@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://dxmxfox74a554" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Coeur.png" id="22_8ku25"]
 [ext_resource type="Texture2D" uid="uid://b8530pj8wyxse" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Pique.png" id="23_c3nn8"]
 [ext_resource type="Texture2D" uid="uid://c7qyrsolpxdqo" path="res://assets/CHARA_VISUELS/Roi/Roi_Sceptre_Trefle.png" id="24_koem0"]
+[ext_resource type="Script" uid="uid://ksynd2k1s6ah" path="res://addons/godot_sfxr/SfxrStreamPlayer.gd" id="27_33xuu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ho1e7"]
 size = Vector2(40, 40)
@@ -415,3 +416,32 @@ texture_filter = 1
 position = Vector2(37.5, -9.5)
 sprite_frames = SubResource("SpriteFrames_7w1fe")
 animation = &"Sans_Couronne"
+
+[node name="SfxrStreamPlayer" type="AudioStreamPlayer" parent="."]
+script = ExtResource("27_33xuu")
+wave/type = 0
+sample_params/sound_vol = 0.25
+sample_params/sample_rate = 44100.0
+envelope/attack_time = 0.0
+envelope/sustain_time = 0.58391315
+envelope/punch_time = 0.42255485
+envelope/decay_time = 0.6780052602291107
+frequency/start_frequency = 0.13615778746815113
+frequency/min_freq_cutoff = 0.0
+frequency/slide = 0.0
+frequency/delta_slide = 0.0
+vibrato/depth = 0.0
+vibrato/speed = 0.0
+arpeggiation/frequency_mult = -0.3162
+arpeggiation/change_speed = 0.7380916118621826
+duty_cycle/duty_cycle = 0.09743236
+duty_cycle/sweep = 0.0
+retrigger/rate = 0.0
+flanger/offset = 0.0
+flanger/sweep = 0.0
+low_pass_filter/cutoff_frequency = 0.24875557169854545
+low_pass_filter/cutoff_sweep = -0.8051607757806778
+low_pass_filter/resonance = 0.27363557
+high_pass_filter/cutoff_frequency = 0.130111516
+high_pass_filter/cutoff_sweep = 0.0
+metadata/_custom_type_script = "uid://ksynd2k1s6ah"

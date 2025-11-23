@@ -643,7 +643,7 @@ func _end_tutorial():
 	await tween.finished
 	
 	# Message final
-	hud.show_tutorial_message("C'est parti !")
+	hud.show_tutorial_message("Let's go !")
 	await get_tree().create_timer(1.0, true, false, true).timeout
 	hud.hide_tutorial_message()
 	
