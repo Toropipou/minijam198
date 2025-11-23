@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0s7hhx13v7j1"]
+[gd_scene load_steps=6 format=3 uid="uid://d0s7hhx13v7j1"]
 
 [ext_resource type="Script" uid="uid://jpgpdr15v7ha" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://cco54q68qyf7u" path="res://assets/UI/fleche_lane.png" id="2_dovo2"]
+[ext_resource type="AudioStream" uid="uid://bx0ljb7yxg4bx" path="res://assets/songs/Player/Footsteps.wav" id="3_lvxji"]
+[ext_resource type="Script" uid="uid://ksynd2k1s6ah" path="res://addons/godot_sfxr/SfxrStreamPlayer.gd" id="4_p47bc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
 size = Vector2(40, 40)
@@ -26,3 +28,34 @@ position = Vector2(20, 20)
 scale = Vector2(4, 4)
 texture = ExtResource("2_dovo2")
 offset = Vector2(18.75, -0.25)
+
+[node name="SfxrStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_lvxji")
+bus = &"SFX"
+script = ExtResource("4_p47bc")
+wave/type = 1
+sample_params/sound_vol = 0.25
+sample_params/sample_rate = 44100.0
+envelope/attack_time = 0.0
+envelope/sustain_time = 0.6641
+envelope/punch_time = 0.0
+envelope/decay_time = 0.0
+frequency/start_frequency = 0.35173364
+frequency/min_freq_cutoff = 0.0
+frequency/slide = 0.0
+frequency/delta_slide = 0.0
+vibrato/depth = 0.0
+vibrato/speed = 0.0
+arpeggiation/frequency_mult = 0.0
+arpeggiation/change_speed = 0.0
+duty_cycle/duty_cycle = 0.0
+duty_cycle/sweep = 0.0
+retrigger/rate = 0.0
+flanger/offset = 0.0
+flanger/sweep = 0.0
+low_pass_filter/cutoff_frequency = 1.0
+low_pass_filter/cutoff_sweep = 0.0
+low_pass_filter/resonance = 0.0
+high_pass_filter/cutoff_frequency = 0.0
+high_pass_filter/cutoff_sweep = 0.0
+metadata/_custom_type_script = "uid://ksynd2k1s6ah"
