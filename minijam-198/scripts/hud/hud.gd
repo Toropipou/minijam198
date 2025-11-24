@@ -187,9 +187,10 @@ func _create_tutorial_ui():
 	tutorial_message_label.offset_bottom = -400
 	tutorial_message_label.offset_left = -1200
 	tutorial_message_label.offset_right = 500
-	tutorial_message_label.modulate = Color(1, 1, 0.5, 1)
+	tutorial_message_label.modulate = Color(0.0, 0.0, 0.0, 1.0)
 	tutorial_message_label.visible = false
 	tutorial_message_label.z_index = 200
+	tutorial_message_label.add_theme_font_override("font", load("res://assets/Jack Armstrong.ttf"))
 	add_child(tutorial_message_label)
 
 func show_tutorial_message(text: String):
@@ -209,11 +210,11 @@ func hide_tutorial_message():
 func show_tutorial_error(text: String):
 	"""Affiche une erreur tutoriel en rouge"""
 	tutorial_message_label.text = text
-	tutorial_message_label.modulate = Color(1, 0.3, 0.3, 1)
+	tutorial_message_label.modulate = Color(0.0, 0.0, 0.0, 1.0)
 	tutorial_message_label.visible = true
 	
 	await get_tree().create_timer(2.0).timeout
-	tutorial_message_label.modulate = Color(1, 1, 0.5, 1)
+	tutorial_message_label.modulate = Color(0.0, 0.0, 0.0, 1.0)
 
 func highlight_spell_for_weakness(weakness: String):
 	"""Met en surbrillance le sort correspondant à une faiblesse"""

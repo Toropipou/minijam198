@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://d0s7hhx13v7j1"]
 
 [ext_resource type="Script" uid="uid://jpgpdr15v7ha" path="res://scripts/player/player.gd" id="1_8afob"]
-[ext_resource type="Texture2D" uid="uid://cco54q68qyf7u" path="res://assets/UI/fleche_lane.png" id="2_dovo2"]
+[ext_resource type="Texture2D" uid="uid://bc0extlclcs4f" path="res://assets/UI/fleche/fleche.png" id="2_gx1jg"]
 [ext_resource type="AudioStream" uid="uid://bx0ljb7yxg4bx" path="res://assets/songs/Player/Footsteps.wav" id="3_lvxji"]
 [ext_resource type="Script" uid="uid://ksynd2k1s6ah" path="res://addons/godot_sfxr/SfxrStreamPlayer.gd" id="4_p47bc"]
 [ext_resource type="Texture2D" uid="uid://xupiv5fh88u7" path="res://assets/player/Joker/Lancer_Carte.png" id="5_gx1jg"]
@@ -73,11 +73,11 @@ shape = SubResource("RectangleShape2D_dovo2")
 wait_time = 0.5
 
 [node name="TargetingIndicator" type="Sprite2D" parent="."]
-texture_filter = 1
-position = Vector2(20, 20)
-scale = Vector2(4, 4)
-texture = ExtResource("2_dovo2")
-offset = Vector2(18.75, -0.25)
+texture_filter = 4
+position = Vector2(33, -36)
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("2_gx1jg")
+offset = Vector2(538.75, -20.249939)
 
 [node name="SfxrStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_lvxji")
@@ -116,4 +116,4 @@ scale = Vector2(0.07, 0.07)
 sprite_frames = SubResource("SpriteFrames_ioxgp")
 animation = &"run"
 autoplay = "run"
-frame_progress = 0.7596072
+frame_progress = 0.43609676

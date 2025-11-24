@@ -113,8 +113,8 @@ color_ramp = SubResource("Gradient_q6mn5")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_558d4"]
 shader = ExtResource("5_nhd55")
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_ascoc")
-shader_parameter/bottom_color = Color(1, 0.69803923, 1, 1)
-shader_parameter/middle_color = Color(1, 0, 0, 1)
+shader_parameter/bottom_color = Color(1, 1, 1, 0)
+shader_parameter/middle_color = Color(0.36098695, 0.1933836, 0.018372878, 1)
 shader_parameter/top_color = Color(1, 0.4627451, 0, 1)
 shader_parameter/fire_alpha = 0.670000031825
 shader_parameter/fire_speed = Vector2(0.96, 0.11)

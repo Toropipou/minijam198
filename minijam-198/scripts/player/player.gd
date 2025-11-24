@@ -7,7 +7,7 @@ extends CharacterBody2D
 
 # Indicateur de visée
 @onready var targeting_indicator = $TargetingIndicator  # Nœud qui contiendra la flèche
-var arrow_size_base := Vector2(2,2)
+var arrow_size_base := Vector2(0.05,0.05)
 
 # Système de PV
 signal health_changed(current_health: int, max_health: int)

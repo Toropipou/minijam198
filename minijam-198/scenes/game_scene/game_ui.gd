@@ -92,6 +92,7 @@ const TIME_TO_MAX_DIFFICULTY : float = 90.0
 @onready var viewport = $ViewportContainer/ConfigurableSubViewport
 @onready var player = $ViewportContainer/ConfigurableSubViewport/Player
 @onready var parallax = $ViewportContainer/ConfigurableSubViewport/Bg
+@onready var parallax_2 = $ViewportContainer/ConfigurableSubViewport/Parallax2D
 @onready var spawner = $ViewportContainer/ConfigurableSubViewport/EnemySpawner
 @onready var hud = $ViewportContainer/ConfigurableSubViewport/hud
 
@@ -358,6 +359,7 @@ func _process(delta: float) -> void:
 	
 	update_dynamic_speed(delta)
 	parallax.scroll_offset.x -= speed * 2.5 * delta
+	parallax_2.scroll_offset.x -= speed * 2 * delta
 	
 	var screen_left = -100
 	for enemy in active_enemies:
@@ -687,7 +689,7 @@ func _tutorial_step_3():
 	tutorial_step = 3
 	await get_tree().create_timer(2.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
 	# Message
-	hud.show_tutorial_message("Enemies can have many weaknesses !\nThey can also appear on the upper lane (press UP/DOWN to navigate)")
+	hud.show_tutorial_message("Enemies can have many weaknesses !\nThey can also appear on the upper lane.\n (press UP/DOWN to navigate)")
 	await get_tree().create_timer(3.0 * TUTORIAL_TIME_SCALE, true, false, true).timeout
 
 	
@@ -902,7 +904,7 @@ func cast_spell(spell_type: String, lane) -> bool:
 			
 			if not spell_matches:
 				# Mauvais sort pendant le tutoriel - afficher un feedback
-				hud.show_tutorial_error("Mauvais sort ! Essaie celui qui correspond à la couleur de l'ennemi.")
+				hud.show_tutorial_error("Wrong spell! Try another one matching with the enemy.")
 				return false
 	
 	if current_mana <= 0:
